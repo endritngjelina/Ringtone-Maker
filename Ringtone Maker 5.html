@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringtone Maker Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            --secondary-gradient: linear-gradient(45deg, #a8edea, #fed6e3);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --dark-glass: rgba(0, 0, 0, 0.3);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.3);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--primary-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(78, 205, 196, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 3.2em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.1); }
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .control-group {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out forwards;
+            animation-delay: calc(var(--delay, 0) * 0.1s);
+        }
+
+        .control-group:nth-child(1) { --delay: 1; }
+        .control-group:nth-child(2) { --delay: 2; }
+        .control-group:nth-child(3) { --delay: 3; }
+        .control-group:nth-child(4) { --delay: 4; }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .control-group::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .control-group:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .control-group:hover::before {
+            transform: scaleX(1);
+        }
+
+        .control-group h3 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.3em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group h3::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+        .btn {
+            background: var(--accent-gradient);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            margin: 6px;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-strong);
+            filter: brightness(1.1);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .btn.playing {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            animation: pulse-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from {
+                box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(78, 205, 196, 0.8);
+            }
+        }
+
+        .btn.secondary {
+            background: var(--secondary-gradient);
+            color: #333;
+            font-weight: 600;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .slider-container {
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .slider-container label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            -webkit-appearance: none;
+        }
+
+        .slider:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .piano-roll {
+            background: var(--dark-glass);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .piano-roll::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-gradient);
+        }
+
+        .piano-roll h3 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .timeline {
+            display: flex;
+            margin-bottom: 15px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .time-marker {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            transition: var(--transition-smooth);
+        }
+
+        .time-marker:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .grid-container {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .note-labels {
+            background: var(--dark-glass);
+            width: 90px;
+            flex-shrink: 0;
+            border-right: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .note-label {
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .note-label:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #4ecdc4;
+        }
+
+        .note-label.black-key {
+            background: rgba(0, 0, 0, 0.6);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .note-label.black-key:hover {
+            background: rgba(0, 0, 0, 0.8);
+            color: #ff6b6b;
+        }
+
+        .grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(32, 1fr);
+            gap: 1px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .grid-cell {
+            height: 42px;
+            background: rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-cell::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            transition: var(--transition-bounce);
+            transform: translate(-50%, -50%);
+        }
+
+        .grid-cell:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .grid-cell:hover::before {
+            width: 20px;
+            height: 20px;
+        }
+
+        .grid-cell.active {
+            background: var(--accent-gradient);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 0 20px rgba(255, 107, 107, 0.6),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            animation: noteActivate 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes noteActivate {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .grid-cell.black-key {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .grid-cell.black-key:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .grid-cell.black-key.active {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        .playhead {
+            position: absolute;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ff6b6b, #4ecdc4);
+            pointer-events: none;
+            transition: left 0.1s linear;
+            box-shadow: 
+                0 0 15px #ff6b6b,
+                0 0 30px rgba(255, 107, 107, 0.5);
+            z-index: 100;
+        }
+
+        .playhead::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -3px;
+            width: 9px;
+            height: 9px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
+        }
+
+        .waveform-container {
+            background: var(--dark-glass);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .waveform-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        }
+
+        .waveform-container h3 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .waveform {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .waveform canvas {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.3));
+        }
+
+        .export-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .export-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+        }
+
+        .export-panel h3 {
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .format-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .format-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: #fff;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            font-weight: 600;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .format-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .format-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .format-btn:hover::before {
+            left: 100%;
+        }
+
+        .format-btn.active {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border-color: #4ecdc4;
+            box-shadow: 0 0 25px rgba(78, 205, 196, 0.4);
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: progressShimmer 2s infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            background: var(--secondary-gradient);
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: var(--transition-bounce);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preset-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: var(--transition-bounce);
+            transform: translate(-50%, -50%);
+        }
+
+        .preset-btn:hover {
+            transform: translateY(-3px) scale(1.08);
+            box-shadow: var(--shadow-strong);
+            filter: brightness(1.1);
+        }
+
+        .preset-btn:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .preset-btn:active {
+            transform: translateY(-1px) scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+            
+            .control-panel {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .control-group {
+                padding: 20px;
+            }
+            
+            .grid {
+                grid-template-columns: repeat(16, 1fr);
+            }
+
+            .note-labels {
+                width: 70px;
+            }
+
+            .note-label {
+                height: 35px;
+                font-size: 0.8em;
+            }
+
+            .grid-cell {
+                height: 35px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+
+            .format-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .format-btn {
+                width: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .control-group h3 {
+                font-size: 1.1em;
+            }
+
+            .piano-roll h3,
+            .waveform-container h3 {
+                font-size: 1.3em;
+            }
+
+            .export-panel h3 {
+                font-size: 1.5em;
+            }
+
+            .grid {
+                grid-template-columns: repeat(12, 1fr);
+            }
+
+            .preset-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .preset-btn {
+                width: 200px;
+            }
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #4ecdc4;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .success-message {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1em;
+            box-shadow: var(--shadow-medium);
+            animation: slideInScale 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: successShimmer 2s infinite;
+        }
+
+        @keyframes slideInScale {
+            from {
+                transform: translateY(-20px) scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes successShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-gradient);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #ff8a8a, #6ee5dd);
+        }
+
+        /* Focus states for accessibility */
+        .btn:focus,
+        .slider:focus,
+        .format-btn:focus,
+        .preset-btn:focus {
+            outline: 2px solid #4ecdc4;
+            outline-offset: 2px;
+        }
+
+        /* Selection styling */
+        ::selection {
+            background: rgba(78, 205, 196, 0.3);
+            color: #fff;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 140px;
+            background-color: rgba(0,0,0,0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8em;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-music"></i> Ringtone Maker Pro</h1>
+            <p>Create custom ringtones with professional-grade audio tools</p>
+        </div>
+
+        <div class="control-panel">
+            <div class="control-group">
+                <h3><i class="fas fa-play-circle"></i> Playback Controls</h3>
+                <button class="btn" id="playBtn"><i class="fas fa-play"></i> Play</button>
+                <button class="btn" id="stopBtn"><i class="fas fa-stop"></i> Stop</button>
+                <button class="btn" id="clearBtn"><i class="fas fa-trash-alt"></i> Clear All</button>
+                <div class="slider-container">
+                    <label>Tempo: <span id="tempoValue">120</span> BPM</label>
+                    <input type="range" class="slider" id="tempoSlider" min="60" max="200" value="120">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="fas fa-sliders-h"></i> Sound Design</h3>
+                <div class="slider-container">
+                    <label>Volume: <span id="volumeValue">70</span>%</label>
+                    <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="70">
+                </div>
+                <div class="slider-container">
+                    <label>Reverb: <span id="reverbValue">20</span>%</label>
+                    <input type="range" class="slider" id="reverbSlider" min="0" max="100" value="20">
+                </div>
+                <div class="slider-container">
+                    <label>Filter: <span id="filterValue">800</span> Hz</label>
+                    <input type="range" class="slider" id="filterSlider" min="200" max="2000" value="800">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="fas fa-guitar"></i> Instrument</h3>
+                <button class="btn format-btn active" data-wave="sine"><i class="fas fa-wave-square"></i> Sine Wave</button>
+                <button class="btn format-btn" data-wave="square"><i class="fas fa-square"></i> Square Wave</button>
+                <button class="btn format-btn" data-wave="sawtooth"><i class="fas fa-wave-square"></i> Sawtooth</button>
+                <button class="btn format-btn" data-wave="triangle"><i class="fas fa-play"></i> Triangle</button>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="fas fa-prescription-bottle"></i> Quick Presets</h3>
+                <div class="preset-buttons">
+                    <button class="preset-btn" data-preset="classic"><i class="fas fa-phone-alt"></i> Classic Ring</button>
+                    <button class="preset-btn" data-preset="digital"><i class="fas fa-robot"></i> Digital Beep</button>
+                    <button class="preset-btn" data-preset="melody"><i class="fas fa-smile"></i> Happy Melody</button>
+                    <button class="preset-btn" data-preset="alarm"><i class="fas fa-bell"></i> Alarm Tone</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="piano-roll">
+            <h3><i class="fas fa-piano-keyboard"></i> Piano Roll Editor</h3>
+            <div class="timeline" id="timeline"></div>
+            <div class="grid-container">
+                <div class="note-labels" id="noteLabels"></div>
+                <div style="position: relative;">
+                    <div class="grid" id="grid"></div>
+                    <div class="playhead" id="playhead"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="waveform-container">
+            <h3><i class="fas fa-wave-square"></i> Waveform Visualizer</h3>
+            <div class="waveform">
+                <canvas id="waveformCanvas"></canvas>
+            </div>
+        </div>
+
+        <div class="export-panel">
+            <h3><i class="fas fa-file-export"></i> Export Your Ringtone</h3>
+            <div class="format-selector">
+                <div class="format-btn active" data-format="mp3"><i class="fas fa-file-audio"></i> MP3</div>
+                <div class="format-btn" data-format="wav"><i class="fas fa-file-audio"></i> WAV</div>
+                <div class="format-btn" data-format="ogg"><i class="fas fa-file-audio"></i> OGG</div>
+            </div>
+            <div class="slider-container">
+                <label>Duration: <span id="durationValue">10</span> seconds</label>
+                <input type="range" class="slider" id="durationSlider" min="3" max="30" value="10">
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <button class="btn" id="exportBtn"><i class="fas fa-download"></i> Export Ringtone</button>
+            <div id="exportMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        class RingtoneMaker {
+            constructor() {
+                this.audioContext = null;
+                this.masterGain = null;
+                this.reverbNode = null;
+                this.filterNode = null;
+                this.isPlaying = false;
+                this.currentWaveType = 'sine';
+                this.tempo = 120;
+                this.notes = [];
+                this.noteFreqs = this.generateNoteFrequencies();
+                this.playheadPosition = 0;
+                this.animationId = null;
+                this.analyser = null;
+                
+                this.init();
+            }
+
+            async init() {
+                await this.setupAudio();
+                this.setupUI();
+                this.createGrid();
+                this.setupEventListeners();
+                this.startVisualization();
+            }
+
+            async setupAudio() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Master gain
+                    this.masterGain = this.audioContext.createGain();
+                    this.masterGain.gain.value = 0.7;
+                    
+                    // Reverb
+                    this.reverbNode = this.audioContext.createGain();
+                    this.reverbNode.gain.value = 0.2;
+                    
+                    // Filter
+                    this.filterNode = this.audioContext.createBiquadFilter();
+                    this.filterNode.type = 'lowpass';
+                    this.filterNode.frequency.value = 800;
+                    
+                    // Analyser for visualization
+                    this.analyser = this.audioContext.createAnalyser();
+                    this.analyser.fftSize = 2048;
+                    
+                    // Connect audio chain
+                    this.filterNode.connect(this.reverbNode);
+                    this.reverbNode.connect(this.analyser);
+                    this.analyser.connect(this.masterGain);
+                    this.masterGain.connect(this.audioContext.destination);
+                } catch (e) {
+                    console.error("Audio setup failed", e);
+                    alert("Audio context initialization failed. Please try again or check browser compatibility.");
+                }
+            }
+
+            generateNoteFrequencies() {
+                const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+                const frequencies = {};
+                
+                for (let octave = 3; octave <= 6; octave++) {
+                    notes.forEach((note, index) => {
+                        const freq = 440 * Math.pow(2, (octave - 4) + (index - 9) / 12);
+                        frequencies[`${note}${octave}`] = freq;
+                    });
+                }
+                
+                return frequencies;
+            }
+
+            setupUI() {
+                // Timeline
+                const timeline = document.getElementById('timeline');
+                for (let i = 0; i < 32; i++) {
+                    const marker = document.createElement('div');
+                    marker.className = 'time-marker';
+                    marker.textContent = i + 1;
+                    timeline.appendChild(marker);
+                }
+
+                // Note labels
+                const noteLabels = document.getElementById('noteLabels');
+                const noteNames = Object.keys(this.noteFreqs).reverse();
+                
+                noteNames.forEach(note => {
+                    const label = document.createElement('div');
+                    label.className = `note-label ${note.includes('#') ? 'black-key' : ''}`;
+                    label.textContent = note;
+                    noteLabels.appendChild(label);
+                });
+            }
+
+            createGrid() {
+                const grid = document.getElementById('grid');
+                const noteNames = Object.keys(this.noteFreqs).reverse();
+                
+                noteNames.forEach((note, noteIndex) => {
+                    for (let step = 0; step < 32; step++) {
+                        const cell = document.createElement('div');
+                        cell.className = `grid-cell ${note.includes('#') ? 'black-key' : ''}`;
+                        cell.dataset.note = note;
+                        cell.dataset.step = step;
+                        
+                        cell.addEventListener('click', () => this.toggleNote(note, step, cell));
+                        grid.appendChild(cell);
+                    }
+                });
+            }
+
+            toggleNote(note, step, cell) {
+                const noteKey = `${note}-${step}`;
+                const existingIndex = this.notes.findIndex(n => n.note === note && n.step === step);
+                
+                if (existingIndex >= 0) {
+                    this.notes.splice(existingIndex, 1);
+                    cell.classList.remove('active');
+                } else {
+                    this.notes.push({ note, step, frequency: this.noteFreqs[note] });
+                    cell.classList.add('active');
+                }
+                
+                this.notes.sort((a, b) => a.step - b.step);
+            }
+
+            setupEventListeners() {
+                // Playback controls
+                document.getElementById('playBtn').addEventListener('click', () => this.togglePlayback());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearAll());
+                
+                // Sliders
+                document.getElementById('tempoSlider').addEventListener('input', (e) => {
+                    this.tempo = parseInt(e.target.value);
+                    document.getElementById('tempoValue').textContent = this.tempo;
+                });
+                
+                document.getElementById('volumeSlider').addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    this.masterGain.gain.value = value / 100;
+                    document.getElementById('volumeValue').textContent = value;
+                });
+                
+                document.getElementById('reverbSlider').addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    this.reverbNode.gain.value = value / 100;
+                    document.getElementById('reverbValue').textContent = value;
+                });
+                
+                document.getElementById('filterSlider').addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    this.filterNode.frequency.value = value;
+                    document.getElementById('filterValue').textContent = value;
+                });
+                
+                document.getElementById('durationSlider').addEventListener('input', (e) => {
+                    document.getElementById('durationValue').textContent = e.target.value;
+                });
+                
+                // Wave type buttons
+                document.querySelectorAll('[data-wave]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('[data-wave]').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentWaveType = e.target.dataset.wave;
+                    });
+                });
+                
+                // Format buttons
+                document.querySelectorAll('[data-format]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('[data-format]').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                    });
+                });
+                
+                // Preset buttons
+                document.querySelectorAll('[data-preset]').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.loadPreset(e.target.dataset.preset));
+                });
+                
+                // Export button
+                document.getElementById('exportBtn').addEventListener('click', () => this.exportRingtone());
+            }
+
+            async togglePlayback() {
+                if (this.isPlaying) {
+                    this.stop();
+                } else {
+                    await this.play();
+                }
+            }
+
+            async play() {
+                if (this.notes.length === 0) {
+                    this.showNotification('Please add some notes to the grid first!', 'error');
+                    return;
+                }
+
+                try {
+                    if (this.audioContext.state === 'suspended') {
+                        await this.audioContext.resume();
+                    }
+
+                    this.isPlaying = true;
+                    document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i> Pause';
+                    document.getElementById('playBtn').classList.add('playing');
+                    
+                    this.playheadPosition = 0;
+                    this.scheduleNotes();
+                } catch (e) {
+                    console.error("Playback failed", e);
+                    this.showNotification('Playback failed. Please try again.', 'error');
+                }
+            }
+
+            stop() {
+                this.isPlaying = false;
+                this.playheadPosition = 0;
+                document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i> Play';
+                document.getElementById('playBtn').classList.remove('playing');
+                document.getElementById('playhead').style.left = '0%';
+                
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+            }
+
+            scheduleNotes() {
+                const stepDuration = 60 / this.tempo / 4; // 16th notes
+                const startTime = this.audioContext.currentTime;
+                
+                this.notes.forEach(noteData => {
+                    const noteTime = startTime + (noteData.step * stepDuration);
+                    this.playNote(noteData.frequency, noteTime, stepDuration);
+                });
+                
+                this.animatePlayhead(32 * stepDuration);
+                
+                setTimeout(() => {
+                    if (this.isPlaying) {
+                        this.stop();
+                    }
+                }, 32 * stepDuration * 1000);
+            }
+
+            playNote(frequency, startTime, duration) {
+                const oscillator = this.audioContext.createOscillator();
+                const noteGain = this.audioContext.createGain();
+                
+                oscillator.type = this.currentWaveType;
+                oscillator.frequency.value = frequency;
+                
+                noteGain.gain.setValueAtTime(0, startTime);
+                noteGain.gain.linearRampToValueAtTime(0.3, startTime + 0.01);
+                noteGain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                
+                oscillator.connect(noteGain);
+                noteGain.connect(this.filterNode);
+                
+                oscillator.start(startTime);
+                oscillator.stop(startTime + duration);
+            }
+
+            animatePlayhead(totalDuration) {
+                const startTime = Date.now();
+                const playhead = document.getElementById('playhead');
+                
+                const animate = () => {
+                    if (!this.isPlaying) return;
+                    
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    const progress = Math.min(elapsed / totalDuration, 1);
+                    
+                    playhead.style.left = `${progress * 100}%`;
+                    
+                    if (progress < 1) {
+                        this.animationId = requestAnimationFrame(animate);
+                    }
+                };
+                
+                animate();
+            }
+
+            clearAll() {
+                this.notes = [];
+                document.querySelectorAll('.grid-cell.active').forEach(cell => {
+                    cell.classList.remove('active');
+                });
+                this.stop();
+            }
+
+            loadPreset(presetName) {
+                this.clearAll();
+                
+                const presets = {
+                    classic: [
+                        { note: 'E4', step: 0 }, { note: 'G4', step: 2 },
+                        { note: 'E4', step: 4 }, { note: 'G4', step: 6 },
+                        { note: 'E4', step: 8 }, { note: 'G4', step: 10 }
+                    ],
+                    digital: [
+                        { note: 'C5', step: 0 }, { note: 'C5', step: 1 },
+                        { note: 'C5', step: 4 }, { note: 'C5', step: 5 },
+                        { note: 'C5', step: 8 }, { note: 'C5', step: 9 }
+                    ],
+                    melody: [
+                        { note: 'C4', step: 0 }, { note: 'E4', step: 2 },
+                        { note: 'G4', step: 4 }, { note: 'C5', step: 6 },
+                        { note: 'G4', step: 8 }, { note: 'E4', step: 10 },
+                        { note: 'C4', step: 12 }
+                    ],
+                    alarm: [
+                        { note: 'A4', step: 0 }, { note: 'A4', step: 1 },
+                        { note: 'A4', step: 2 }, { note: 'A4', step: 4 },
+                        { note: 'A4', step: 5 }, { note: 'A4', step: 6 }
+                    ]
+                };
+                
+                const preset = presets[presetName];
+                if (preset) {
+                    preset.forEach(({ note, step }) => {
+                        const cell = document.querySelector(`[data-note="${note}"][data-step="${step}"]`);
+                        if (cell) {
+                            this.notes.push({ note, step, frequency: this.noteFreqs[note] });
+                            cell.classList.add('active');
+                        }
+                    });
+                    this.showNotification(`Preset "${presetName.replace(/\b\w/g, l => l.toUpperCase())}" loaded!`, 'success');
+                }
+            }
+
+            startVisualization() {
+                const canvas = document.getElementById('waveformCanvas');
+                const ctx = canvas.getContext('2d');
+                const bufferLength = this.analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                
+                const resize = () => {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                };
+                
+                resize();
+                window.addEventListener('resize', resize);
+                
+                const draw = () => {
+                    this.analyser.getByteTimeDomainData(dataArray);
+                    
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.strokeStyle = '#4ecdc4';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    
+                    const sliceWidth = canvas.width * 1.0 / bufferLength;
+                    let x = 0;
+                    
+                    for (let i = 0; i < bufferLength; i++) {
+                        const v = dataArray[i] / 128.0;
+                        const y = v * canvas.height / 2;
+                        
+                        if (i === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                        
+                        x += sliceWidth;
+                    }
+                    
+                    ctx.lineTo(canvas.width, canvas.height / 2);
+                    ctx.stroke();
+                    
+                    requestAnimationFrame(draw);
+                };
+                
+                draw();
+            }
+
+            async exportRingtone() {
+                if (this.notes.length === 0) {
+                    this.showNotification('Please add some notes before exporting!', 'error');
+                    return;
+                }
+
+                const exportBtn = document.getElementById('exportBtn');
+                const progressFill = document.getElementById('progressFill');
+                const exportMessage = document.getElementById('exportMessage');
+                
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+                exportBtn.disabled = true;
+                exportMessage.innerHTML = '';
+                
+                // Simulate export process
+                const duration = parseInt(document.getElementById('durationValue').textContent);
+                const format = document.querySelector('.format-btn.active').dataset.format;
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressFill.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        
+                        // Show success message
+                        setTimeout(() => {
+                            exportBtn.innerHTML = '<i class="fas fa-download"></i> Export Ringtone';
+                            exportBtn.disabled = false;
+                            progressFill.style.width = '0%';
+                            
+                            exportMessage.innerHTML = `
+                                <div class="success-message">
+                                    <i class="fas fa-check-circle"></i> Ringtone exported successfully as ${format.toUpperCase()}!
+                                    <div class="tooltip" style="margin-top: 10px;">
+                                        <button class="preset-btn" id="downloadBtn"><i class="fas fa-download"></i> Download</button>
+                                        <span class="tooltip-text">This is a simulation for demo purposes</span>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            document.getElementById('downloadBtn').addEventListener('click', () => {
+                                this.showNotification('In a real app, this would download your ringtone!', 'info');
+                            });
+                        }, 300);
+                    }
+                }, 100);
+            }
+            
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `success-message ${type === 'error' ? 'error' : ''}`;
+                notification.innerHTML = `
+                    <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 500);
+                }, 3000);
+            }
+        }
+
+        // Initialize the app when the page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            const app = new RingtoneMaker();
+        });
+    </script>
+</body>
+</html>
