@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringtone Maker Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-panel {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .controls-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .control-group:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .control-group h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .value-display {
+            min-width: 60px;
+            text-align: right;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .piano-roll {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .piano-header {
+            background: linear-gradient(90deg, #333 0%, #555 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .time-grid {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 60px 10px 100px;
+        }
+
+        .time-marker {
+            flex: 1;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            border-right: 1px solid #ddd;
+            padding: 5px 0;
+        }
+
+        .piano-grid {
+            display: flex;
+        }
+
+        .piano-keys {
+            width: 100px;
+            background: #fff;
+        }
+
+        .piano-key {
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .piano-key.white {
+            background: #fff;
+            color: #333;
+        }
+
+        .piano-key.black {
+            background: #333;
+            color: white;
+        }
+
+        .piano-key:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .note-grid {
+            flex: 1;
+            position: relative;
+        }
+
+        .note-row {
+            height: 25px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            cursor: crosshair;
+        }
+
+        .note-row:nth-child(odd) {
+            background: #fafafa;
+        }
+
+        .note-cell {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            border-right: 1px solid #e0e0e0;
+            transition: background-color 0.2s ease;
+        }
+
+        .note-cell:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .note-block {
+            position: absolute;
+            top: 2px;
+            height: 21px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 4px;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .note-block:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .note-block.playing {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            animation: pulse 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .transport-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(116, 185, 255, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(116, 185, 255, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.6);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff7675, #d63031);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 118, 117, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 118, 117, 0.6);
+        }
+
+        .playhead {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: #ff6b6b;
+            z-index: 10;
+            transition: left 0.1s linear;
+            box-shadow: 0 0 4px rgba(255, 107, 107, 0.6);
+        }
+
+        .waveform-preview {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .waveform-canvas {
+            width: 100%;
+            height: 80px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .export-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .export-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .format-option {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .format-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .status-bar {
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .keyboard-shortcuts {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .shortcut {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .key-combo {
+            background: #333;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .controls-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .transport-controls {
+                flex-wrap: wrap;
+            }
+            
+            .piano-grid {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Ringtone Maker Pro</h1>
+            <p>Create professional custom ringtones and notification sounds</p>
+        </div>
+
+        <div class="main-panel">
+            <div class="controls-section">
+                <div class="control-group">
+                    <h3>⏱️ Tempo & Timing</h3>
+                    <div class="slider-container">
+                        <label>BPM:</label>
+                        <input type="range" class="slider" id="bpmSlider" min="60" max="200" value="120">
+                        <span class="value-display" id="bpmValue">120</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Swing:</label>
+                        <input type="range" class="slider" id="swingSlider" min="0" max="100" value="0">
+                        <span class="value-display" id="swingValue">0%</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🎛️ Sound Design</h3>
+                    <div class="slider-container">
+                        <label>Volume:</label>
+                        <input type="range" class="slider" id="volumeSlider" min="0" max="100" value="80">
+                        <span class="value-display" id="volumeValue">80%</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Reverb:</label>
+                        <input type="range" class="slider" id="reverbSlider" min="0" max="100" value="20">
+                        <span class="value-display" id="reverbValue">20%</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🎹 Instrument</h3>
+                    <select id="instrumentSelect" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ddd; margin-bottom: 10px;">
+                        <option value="sine">Piano</option>
+                        <option value="square">Synth Lead</option>
+                        <option value="sawtooth">Bass</option>
+                        <option value="triangle">Soft Pad</option>
+                    </select>
+                    <div class="slider-container">
+                        <label>Attack:</label>
+                        <input type="range" class="slider" id="attackSlider" min="0" max="1000" value="50">
+                        <span class="value-display" id="attackValue">50ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="piano-roll">
+                <div class="piano-header">
+                    <h3>🎼 Piano Roll Editor</h3>
+                    <div>
+                        <span>Duration: <span id="durationDisplay">4.0s</span></span>
+                        <button class="btn btn-secondary" id="clearBtn" style="margin-left: 15px; padding: 6px 12px; font-size: 0.8rem;">Clear All</button>
+                    </div>
+                </div>
+                <div class="time-grid" id="timeGrid"></div>
+                <div class="piano-grid">
+                    <div class="piano-keys" id="pianoKeys"></div>
+                    <div class="note-grid" id="noteGrid">
+                        <div class="playhead" id="playhead"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="transport-controls">
+                <button class="btn btn-primary" id="playBtn">▶️ Play</button>
+                <button class="btn btn-secondary" id="stopBtn">⏹️ Stop</button>
+                <button class="btn btn-secondary" id="recordBtn">⏺️ Record</button>
+                <button class="btn btn-success" id="previewBtn">👂 Preview</button>
+            </div>
+
+            <div class="waveform-preview">
+                <h3>📊 Waveform Preview</h3>
+                <canvas class="waveform-canvas" id="waveformCanvas"></canvas>
+            </div>
+
+            <div class="export-section">
+                <h3>💾 Export Your Ringtone</h3>
+                <div class="export-options">
+                    <div class="format-option selected" data-format="mp3">MP3</div>
+                    <div class="format-option" data-format="wav">WAV</div>
+                    <div class="format-option" data-format="ogg">OGG</div>
+                </div>
+                <button class="btn btn-success" id="exportBtn">📱 Export Ringtone</button>
+                <div class="loading-spinner" id="loadingSpinner"></div>
+            </div>
+
+            <div class="status-bar">
+                <span id="statusText">Ready - Click on the grid to add notes</span>
+                <span id="noteCount">Notes: 0</span>
+            </div>
+
+            <div class="keyboard-shortcuts">
+                <h4>⌨️ Keyboard Shortcuts</h4>
+                <div class="shortcuts-grid">
+                    <div class="shortcut">
+                        <span>Play/Stop</span>
+                        <span class="key-combo">SPACE</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Clear All</span>
+                        <span class="key-combo">DELETE</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Tempo Up/Down</span>
+                        <span class="key-combo">↑/↓</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Volume Up/Down</span>
+                        <span class="key-combo">+/-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone.js/14.8.49/Tone.min.js"></script>
+    <script>
+        class RingtoneMaker {
+            constructor() {
+                this.notes = [];
+                this.isPlaying = false;
+                this.currentTime = 0;
+                this.bpm = 120;
+                this.gridWidth = 800;
+                this.cellWidth = 25;
+                this.totalTime = 8; // seconds
+                this.selectedFormat = 'mp3';
+                this.recorder = null;
+                this.recordedBlob = null;
+                
+                // Audio context and components
+                this.audioContext = null;
+                this.synth = null;
+                this.reverb = null;
+                this.masterGain = null;
+                
+                this.initializeAudio();
+                this.initializeUI();
+                this.bindEvents();
+                this.generateGrid();
+                this.updateWaveform();
+            }
+
+            async initializeAudio() {
+                try {
+                    await Tone.start();
+                    
+                    // Create audio components
+                    this.reverb = new Tone.Reverb({
+                        decay: 2,
+                        wet: 0.2
+                    }).toDestination();
+                    
+                    this.masterGain = new Tone.Gain(0.8).connect(this.reverb);
+                    
+                    this.synth = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: 'sine' },
+                        envelope: {
+                            attack: 0.05,
+                            decay: 0.1,
+                            sustain: 0.3,
+                            release: 0.8
+                        }
+                    }).connect(this.masterGain);
+                    
+                    this.updateStatus('Audio system initialized');
+                } catch (error) {
+                    console.error('Audio initialization failed:', error);
+                    this.updateStatus('Audio initialization failed');
+                }
+            }
+
+            initializeUI() {
+                this.elements = {
+                    playBtn: document.getElementById('playBtn'),
+                    stopBtn: document.getElementById('stopBtn'),
+                    recordBtn: document.getElementById('recordBtn'),
+                    previewBtn: document.getElementById('previewBtn'),
+                    clearBtn: document.getElementById('clearBtn'),
+                    exportBtn: document.getElementById('exportBtn'),
+                    bpmSlider: document.getElementById('bpmSlider'),
+                    volumeSlider: document.getElementById('volumeSlider'),
+                    reverbSlider: document.getElementById('reverbSlider'),
+                    swingSlider: document.getElementById('swingSlider'),
+                    attackSlider: document.getElementById('attackSlider'),
+                    instrumentSelect: document.getElementById('instrumentSelect'),
+                    noteGrid: document.getElementById('noteGrid'),
+                    pianoKeys: document.getElementById('pianoKeys'),
+                    timeGrid: document.getElementById('timeGrid'),
+                    playhead: document.getElementById('playhead'),
+                    waveformCanvas: document.getElementById('waveformCanvas'),
+                    statusText: document.getElementById('statusText'),
+                    noteCount: document.getElementById('noteCount'),
+                    durationDisplay: document.getElementById('durationDisplay')
+                };
+            }
+
+            bindEvents() {
+                // Transport controls
+                this.elements.playBtn.addEventListener('click', () => this.togglePlay());
+                this.elements.stopBtn.addEventListener('click', () => this.stop());
+                this.elements.recordBtn.addEventListener('click', () => this.toggleRecord());
+                this.elements.previewBtn.addEventListener('click', () => this.previewRingtone());
+                this.elements.clearBtn.addEventListener('click', () => this.clearAll());
+                this.elements.exportBtn.addEventListener('click', () => this.exportRingtone());
+
+                // Parameter controls
+                this.elements.bpmSlider.addEventListener('input', (e) => {
+                    this.bpm = parseInt(e.target.value);
+                    document.getElementById('bpmValue').textContent = this.bpm;
+                    this.updateStatus(`Tempo: ${this.bpm} BPM`);
+                });
+
+                this.elements.volumeSlider.addEventListener('input', (e) => {
+                    const volume = parseInt(e.target.value) / 100;
+                    if (this.masterGain) this.masterGain.gain.value = volume;
+                    document.getElementById('volumeValue').textContent = e.target.value + '%';
+                });
+
+                this.elements.reverbSlider.addEventListener('input', (e) => {
+                    const wetness = parseInt(e.target.value) / 100;
+                    if (this.reverb) this.reverb.wet.value = wetness;
+                    document.getElementById('reverbValue').textContent = e.target.value + '%';
+                });
+
+                this.elements.swingSlider.addEventListener('input', (e) => {
+                    document.getElementById('swingValue').textContent = e.target.value + '%';
+                });
+
+                this.elements.attackSlider.addEventListener('input', (e) => {
+                    const attack = parseInt(e.target.value) / 1000;
+                    if (this.synth) {
+                        this.synth.set({ envelope: { attack } });
+                    }
+                    document.getElementById('attackValue').textContent = e.target.value + 'ms';
+                });
+
+                this.elements.instrumentSelect.addEventListener('change', (e) => {
+                    if (this.synth) {
+                        this.synth.set({ oscillator: { type: e.target.value } });
+                    }
+                    this.updateStatus(`Instrument: ${e.target.options[e.target.selectedIndex].text}`);
+                });
+
+                // Format selection
+                document.querySelectorAll('.format-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        document.querySelectorAll('.format-option').forEach(o => o.classList.remove('selected'));
+                        e.target.classList.add('selected');
+                        this.selectedFormat = e.target.dataset.format;
+                    });
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'INPUT') return;
+                    
+                    switch(e.code) {
+                        case 'Space':
+                            e.preventDefault();
+                            this.togglePlay();
+                            break;
+                        case 'Delete':
+                            this.clearAll();
+                            break;
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            this.adjustBPM(5);
+                            break;
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            this.adjustBPM(-5);
+                            break;
+                        case 'Equal':
+                        case 'Plus':
+                            this.adjustVolume(5);
+                            break;
+                        case 'Minus':
+                            this.adjustVolume(-5);
+                            break;
+                    }
+                });
+            }
+
+            generateGrid() {
+                const notes = ['C6', 'B5', 'A#5', 'A5', 'G#5', 'G5', 'F#5', 'F5', 'E5', 'D#5', 'D5', 'C#5', 'C5', 'B4', 'A#4', 'A4', 'G#4', 'G4', 'F#4', 'F4', 'E4', 'D#4', 'D4', 'C#4', 'C4'];
+                
+                // Generate piano keys
+                this.elements.pianoKeys.innerHTML = '';
+                notes.forEach(note => {
+                    const keyDiv = document.createElement('div');
+                    keyDiv.className = `piano-key ${note.includes('#') ? 'black' : 'white'}`;
+                    keyDiv.textContent = note;
+                    keyDiv.addEventListener('click', () => this.playNote(note));
+                    this.elements.pianoKeys.appendChild(keyDiv);
+                });
+
+                // Generate time grid
+                this.elements.timeGrid.innerHTML = '';
+                for (let i = 0; i <= this.totalTime; i += 0.5) {
+                    const marker = document.createElement('div');
+                    marker.className = 'time-marker';
+                    marker.textContent = i.toFixed(1) + 's';
+                    this.elements.timeGrid.appendChild(marker);
+                }
+
+                // Generate note grid
+                this.elements.noteGrid.innerHTML = '<div class="playhead" id="playhead"></div>';
+                this.elements.playhead = document.getElementById('playhead');
+                
+                notes.forEach((note, noteIndex) => {
+                    const row = document.createElement('div');
+                    row.className = 'note-row';
+                    row.dataset.note = note;
+                    
+                    // Add click handler for adding notes
+                    row.addEventListener('click', (e) => {
+                        const rect = row.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const time = (x / rect.width) * this.totalTime;
+                        this.addNote(note, time, 0.5); // 0.5 second duration
+                    });
+                    
+                    this.elements.noteGrid.appendChild(row);
+                });
+            }
+
+            addNote(note, time, duration = 0.5) {
+                const noteObj = {
+                    id: Date.now() + Math.random(),
+                    note: note,
+                    time: time,
+                    duration: duration
+                };
+                
+                this.notes.push(noteObj);
+                this.renderNote(noteObj);
+                this.updateNoteCount();
+                this.updateWaveform();
+                this.updateStatus(`Added ${note} at ${time.toFixed(2)}s`);
+            }
+
+            renderNote(noteObj) {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note-block';
+                noteElement.dataset.id = noteObj.id;
+                noteElement.textContent = noteObj.note;
+                
+                const row = document.querySelector(`[data-note="${noteObj.note}"]`);
+                const left = (noteObj.time / this.totalTime) * 100;
+                const width = (noteObj.duration / this.totalTime) * 100;
+                
+                noteElement.style.left = left + '%';
+                noteElement.style.width = width + '%';
+                
+                // Add delete functionality
+                noteElement.addEventListener('dblclick', () => {
+                    this.removeNote(noteObj.id);
+                });
+                
+                row.appendChild(noteElement);
+            }
+
+            removeNote(id) {
+                this.notes = this.notes.filter(note => note.id !== id);
+                const element = document.querySelector(`[data-id="${id}"]`);
+                if (element) element.remove();
+                this.updateNoteCount();
+                this.updateWaveform();
+            }
+
+            playNote(note) {
+                if (this.synth) {
+                    this.synth.triggerAttackRelease(note, '8n');
+                }
+            }
+
+            async togglePlay() {
+                if (this.isPlaying) {
+                    this.stop();
+                } else {
+                    await this.play();
+                }
+            }
+
+            async play() {
+                if (this.notes.length === 0) {
+                    this.updateStatus('No notes to play');
+                    return;
+                }
+
+                this.isPlaying = true;
+                this.elements.playBtn.textContent = '⏸️ Pause';
+                this.updateStatus('Playing...');
+                
+                // Schedule all notes
+                const startTime = Tone.now();
+                this.notes.forEach(note => {
+                    const playTime = startTime + note.time;
+                    this.synth.triggerAttackRelease(note.note, note.duration, playTime);
+                    
+                    // Visual feedback
+                    setTimeout(() => {
+                        const element = document.querySelector(`[data-id="${note.id}"]`);
+                        if (element) {
+                            element.classList.add('playing');
+                            setTimeout(() => element.classList.remove('playing'), note.duration * 1000);
+                        }
+                    }, note.time * 1000);
+                });
+                
+                // Animate playhead
+                this.animatePlayhead();
+                
+                // Stop after total duration
+                setTimeout(() => {
+                    this.stop();
+                }, this.totalTime * 1000);
+            }
+
+            animatePlayhead() {
+                const startTime = Date.now();
+                const animate = () => {
+                    if (!this.isPlaying) return;
+                    
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    const progress = Math.min(elapsed / this.totalTime, 1);
+                    this.elements.playhead.style.left = (progress * 100) + '%';
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                animate();
+            }
+
+            stop() {
+                this.isPlaying = false;
+                this.elements.playBtn.textContent = '▶️ Play';
+                this.elements.playhead.style.left = '0%';
+                Tone.Transport.stop();
+                this.updateStatus('Stopped');
+            }
+
+            async toggleRecord() {
+                if (this.recorder && this.recorder.state === 'recording') {
+                    this.stopRecording();
+                } else {
+                    await this.startRecording();
+                }
+            }
+
+            async startRecording() {
+                try {
+                    const dest = Tone.getDestination();
+                    const mediaRecorder = new MediaRecorder(dest.stream);
+                    const chunks = [];
+                    
+                    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        this.recordedBlob = new Blob(chunks, { type: 'audio/wav' });
+                        this.updateStatus('Recording saved');
+                    };
+                    
+                    this.recorder = mediaRecorder;
+                    mediaRecorder.start();
+                    
+                    this.elements.recordBtn.textContent = '⏹️ Stop Recording';
+                    this.updateStatus('Recording...');
+                    
+                    // Auto-play for recording
+                    await this.play();
+                } catch (error) {
+                    console.error('Recording failed:', error);
+                    this.updateStatus('Recording failed');
+                }
+            }
+
+            stopRecording() {
+                if (this.recorder) {
+                    this.recorder.stop();
+                    this.recorder = null;
+                    this.elements.recordBtn.textContent = '⏺️ Record';
+                    this.stop();
+                }
+            }
+
+            previewRingtone() {
+                if (this.recordedBlob) {
+                    const audio = new Audio(URL.createObjectURL(this.recordedBlob));
+                    audio.play();
+                    this.updateStatus('Playing preview');
+                } else {
+                    this.play();
+                }
+            }
+
+            clearAll() {
+                this.notes = [];
+                document.querySelectorAll('.note-block').forEach(el => el.remove());
+                this.updateNoteCount();
+                this.updateWaveform();
+                this.updateStatus('All notes cleared');
+            }
+
+            async exportRingtone() {
+                if (this.notes.length === 0) {
+                    this.updateStatus('No notes to export');
+                    return;
+                }
+
+                this.showLoading(true);
+                this.updateStatus('Exporting ringtone...');
+
+                try {
+                    // Create offline audio context for high-quality rendering
+                    const sampleRate = 44100;
+                    const offlineContext = new OfflineAudioContext(2, sampleRate * this.totalTime, sampleRate);
+                    
+                    // Create synth for offline rendering
+                    const offlineSynth = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: this.elements.instrumentSelect.value },
+                        envelope: {
+                            attack: parseInt(this.elements.attackSlider.value) / 1000,
+                            decay: 0.1,
+                            sustain: 0.3,
+                            release: 0.8
+                        }
+                    });
+                    
+                    // Connect to offline context
+                    const offlineGain = offlineContext.createGain();
+                    offlineGain.gain.value = parseInt(this.elements.volumeSlider.value) / 100;
+                    offlineGain.connect(offlineContext.destination);
+                    
+                    // Render notes
+                    this.notes.forEach(note => {
+                        const oscillator = offlineContext.createOscillator();
+                        const gainNode = offlineContext.createGain();
+                        
+                        oscillator.type = this.elements.instrumentSelect.value;
+                        oscillator.frequency.value = this.noteToFrequency(note.note);
+                        
+                        // Envelope
+                        const attack = parseInt(this.elements.attackSlider.value) / 1000;
+                        const now = offlineContext.currentTime + note.time;
+                        
+                        gainNode.gain.setValueAtTime(0, now);
+                        gainNode.gain.linearRampToValueAtTime(0.8, now + attack);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, now + note.duration);
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(offlineGain);
+                        
+                        oscillator.start(now);
+                        oscillator.stop(now + note.duration);
+                    });
+                    
+                    const buffer = await offlineContext.startRendering();
+                    const blob = await this.audioBufferToBlob(buffer, this.selectedFormat);
+                    
+                    // Download
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `ringtone_${Date.now()}.${this.selectedFormat}`;
+                    a.click();
+                    
+                    this.updateStatus(`Exported as ${this.selectedFormat.toUpperCase()}`);
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    this.updateStatus('Export failed');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            noteToFrequency(note) {
+                const noteMap = {
+                    'C': -9, 'C#': -8, 'D': -7, 'D#': -6, 'E': -5, 'F': -4,
+                    'F#': -3, 'G': -2, 'G#': -1, 'A': 0, 'A#': 1, 'B': 2
+                };
+                
+                const noteName = note.slice(0, -1);
+                const octave = parseInt(note.slice(-1));
+                const semitones = noteMap[noteName] + (octave - 4) * 12;
+                
+                return 440 * Math.pow(2, semitones / 12);
+            }
+
+            async audioBufferToBlob(buffer, format) {
+                const numberOfChannels = buffer.numberOfChannels;
+                const sampleRate = buffer.sampleRate;
+                const length = buffer.length;
+                
+                if (format === 'wav') {
+                    return this.encodeWAV(buffer);
+                } else {
+                    // For MP3/OGG, we'll use WAV as fallback in this demo
+                    return this.encodeWAV(buffer);
+                }
+            }
+
+            encodeWAV(buffer) {
+                const length = buffer.length;
+                const numberOfChannels = buffer.numberOfChannels;
+                const sampleRate = buffer.sampleRate;
+                const arrayBuffer = new ArrayBuffer(44 + length * numberOfChannels * 2);
+                const view = new DataView(arrayBuffer);
+                
+                // WAV header
+                const writeString = (offset, string) => {
+                    for (let i = 0; i < string.length; i++) {
+                        view.setUint8(offset + i, string.charCodeAt(i));
+                    }
+                };
+                
+                writeString(0, 'RIFF');
+                view.setUint32(4, 36 + length * numberOfChannels * 2, true);
+                writeString(8, 'WAVE');
+                writeString(12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, numberOfChannels, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, sampleRate * numberOfChannels * 2, true);
+                view.setUint16(32, numberOfChannels * 2, true);
+                view.setUint16(34, 16, true);
+                writeString(36, 'data');
+                view.setUint32(40, length * numberOfChannels * 2, true);
+                
+                // Convert float32 to int16
+                let offset = 44;
+                for (let i = 0; i < length; i++) {
+                    for (let channel = 0; channel < numberOfChannels; channel++) {
+                        const sample = Math.max(-1, Math.min(1, buffer.getChannelData(channel)[i]));
+                        view.setInt16(offset, sample * 0x7FFF, true);
+                        offset += 2;
+                    }
+                }
+                
+                return new Blob([arrayBuffer], { type: 'audio/wav' });
+            }
+
+            updateWaveform() {
+                const canvas = this.elements.waveformCanvas;
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width = canvas.offsetWidth;
+                const height = canvas.height = canvas.offsetHeight;
+                
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = '#f8f9fa';
+                ctx.fillRect(0, 0, width, height);
+                
+                if (this.notes.length === 0) {
+                    ctx.fillStyle = '#666';
+                    ctx.font = '14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Add notes to see waveform preview', width / 2, height / 2);
+                    return;
+                }
+                
+                // Draw simplified waveform based on notes
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                const samples = width;
+                for (let x = 0; x < samples; x++) {
+                    const time = (x / samples) * this.totalTime;
+                    let amplitude = 0;
+                    
+                    // Calculate amplitude at this time based on active notes
+                    this.notes.forEach(note => {
+                        if (time >= note.time && time <= note.time + note.duration) {
+                            const freq = this.noteToFrequency(note.note);
+                            const phase = (time - note.time) * freq * 2 * Math.PI;
+                            const envelope = Math.exp(-(time - note.time) * 2); // Simple decay
+                            amplitude += Math.sin(phase) * envelope * 0.3;
+                        }
+                    });
+                    
+                    const y = height / 2 + amplitude * height / 4;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                
+                ctx.stroke();
+                
+                // Draw time markers
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= this.totalTime; i++) {
+                    const x = (i / this.totalTime) * width;
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, height);
+                    ctx.stroke();
+                }
+            }
+
+            adjustBPM(delta) {
+                this.bpm = Math.max(60, Math.min(200, this.bpm + delta));
+                this.elements.bpmSlider.value = this.bpm;
+                document.getElementById('bpmValue').textContent = this.bpm;
+                this.updateStatus(`Tempo: ${this.bpm} BPM`);
+            }
+
+            adjustVolume(delta) {
+                const currentVolume = parseInt(this.elements.volumeSlider.value);
+                const newVolume = Math.max(0, Math.min(100, currentVolume + delta));
+                this.elements.volumeSlider.value = newVolume;
+                document.getElementById('volumeValue').textContent = newVolume + '%';
+                if (this.masterGain) this.masterGain.gain.value = newVolume / 100;
+            }
+
+            updateNoteCount() {
+                this.elements.noteCount.textContent = `Notes: ${this.notes.length}`;
+            }
+
+            updateStatus(message) {
+                this.elements.statusText.textContent = message;
+            }
+
+            showLoading(show) {
+                const spinner = document.getElementById('loadingSpinner');
+                spinner.style.display = show ? 'block' : 'none';
+                this.elements.exportBtn.disabled = show;
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new RingtoneMaker();
+        });
+    </script>
+</body>
+</html>
