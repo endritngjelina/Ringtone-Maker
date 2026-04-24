@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringtone Maker Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .controls-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .control-group h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .transport-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #007AFF, #0051D5);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,122,255,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #007AFF;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            font-size: 16px;
+        }
+
+        .piano-roll {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .piano-header {
+            background: #1a1a1a;
+            padding: 15px;
+            color: white;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .time-ruler {
+            background: #2a2a2a;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .beat-marker {
+            position: absolute;
+            height: 100%;
+            border-left: 1px solid #555;
+            color: #aaa;
+            font-size: 12px;
+            padding-left: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .beat-marker.measure {
+            border-left: 2px solid #007AFF;
+            color: #007AFF;
+            font-weight: bold;
+        }
+
+        .piano-grid {
+            display: flex;
+            background: #1a1a1a;
+        }
+
+        .piano-keys {
+            width: 120px;
+            background: #2a2a2a;
+        }
+
+        .piano-key {
+            height: 25px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            border-bottom: 1px solid #3a3a3a;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .piano-key:hover {
+            background: #007AFF;
+        }
+
+        .piano-key.black {
+            background: #1a1a1a;
+            color: #ccc;
+        }
+
+        .grid-area {
+            flex: 1;
+            position: relative;
+            overflow-x: auto;
+            overflow-y: hidden;
+            background: linear-gradient(90deg, #2a2a2a 0%, #1a1a1a 100%);
+        }
+
+        .grid-canvas {
+            position: relative;
+            width: 1600px;
+            height: 875px; /* 35 keys * 25px */
+        }
+
+        .grid-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #3a3a3a;
+        }
+
+        .grid-line.beat {
+            background: #555;
+        }
+
+        .grid-line.measure {
+            background: #007AFF;
+            width: 2px;
+        }
+
+        .note-row {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 25px;
+            border-bottom: 1px solid #3a3a3a;
+            cursor: crosshair;
+        }
+
+        .note {
+            position: absolute;
+            background: linear-gradient(135deg, #007AFF, #0051D5);
+            border-radius: 4px;
+            height: 20px;
+            top: 2.5px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+        }
+
+        .note:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,122,255,0.4);
+        }
+
+        .note.selected {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            transform: scale(1.1);
+        }
+
+        .playhead {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #FF6B35;
+            z-index: 100;
+            box-shadow: 0 0 10px #FF6B35;
+        }
+
+        .waveform-container {
+            background: #000;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            height: 200px;
+        }
+
+        .waveform {
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .effects-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .effect-control {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007AFF, #0051D5);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .pattern-presets {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .preset-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            background: #007AFF;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .piano-keys {
+                width: 80px;
+            }
+            
+            .piano-key {
+                font-size: 10px;
+                padding: 0 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Ringtone Maker Pro</h1>
+            <p>Create professional custom ringtones with advanced audio synthesis</p>
+        </div>
+
+        <div class="main-panel">
+            <div class="controls-section">
+                <div class="control-group">
+                    <h3>🎮 Transport & Playback</h3>
+                    <div class="transport-controls">
+                        <button class="btn" id="playBtn">▶️ Play</button>
+                        <button class="btn secondary" id="stopBtn">⏹️ Stop</button>
+                        <button class="btn secondary" id="recordBtn">🔴 Record</button>
+                    </div>
+                    <div class="slider-container">
+                        <label>Tempo: <span id="tempoValue">120</span> BPM</label>
+                        <input type="range" id="tempoSlider" min="60" max="200" value="120">
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🎼 Instrument & Sound</h3>
+                    <select id="instrumentSelect">
+                        <option value="sine">Pure Sine Wave</option>
+                        <option value="square">Square Wave</option>
+                        <option value="sawtooth">Sawtooth Wave</option>
+                        <option value="triangle">Triangle Wave</option>
+                        <option value="piano">Piano (FM Synthesis)</option>
+                        <option value="bell">Bell Tone</option>
+                        <option value="pluck">Plucked String</option>
+                    </select>
+                    <div class="slider-container">
+                        <label>Master Volume: <span id="volumeValue">70</span>%</label>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>⏱️ Duration & Export</h3>
+                    <div class="slider-container">
+                        <label>Length: <span id="lengthValue">8</span> seconds</label>
+                        <input type="range" id="lengthSlider" min="3" max="30" value="8">
+                    </div>
+                    <button class="btn success" id="exportBtn">💾 Export MP3</button>
+                    <button class="btn danger" id="clearBtn">🗑️ Clear All</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>🎯 Quick Patterns</h3>
+                <div class="pattern-presets">
+                    <button class="preset-btn" data-pattern="scale">🎵 Scale</button>
+                    <button class="preset-btn" data-pattern="chord">🎹 Chord</button>
+                    <button class="preset-btn" data-pattern="melody">🎶 Melody</button>
+                    <button class="preset-btn" data-pattern="ringtone">📱 Classic Ring</button>
+                    <button class="preset-btn" data-pattern="notification">🔔 Notification</button>
+                    <button class="preset-btn" data-pattern="alarm">⏰ Alarm</button>
+                </div>
+            </div>
+
+            <div class="piano-roll">
+                <div class="piano-header">
+                    <h3>🎹 Piano Roll Editor</h3>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span>Snap: </span>
+                        <select id="snapSelect" style="width: auto; padding: 5px;">
+                            <option value="16">1/16</option>
+                            <option value="8">1/8</option>
+                            <option value="4" selected>1/4</option>
+                            <option value="2">1/2</option>
+                        </select>
+                        <span>Zoom: </span>
+                        <input type="range" id="zoomSlider" min="50" max="200" value="100" style="width: 100px;">
+                    </div>
+                </div>
+                
+                <div class="time-ruler" id="timeRuler"></div>
+                
+                <div class="piano-grid">
+                    <div class="piano-keys" id="pianoKeys"></div>
+                    <div class="grid-area">
+                        <div class="grid-canvas" id="gridCanvas">
+                            <div class="playhead" id="playhead"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="effects-panel">
+                <div class="effect-control">
+                    <h4>🌊 Reverb</h4>
+                    <div class="slider-container">
+                        <label>Amount: <span id="reverbValue">20</span>%</label>
+                        <input type="range" id="reverbSlider" min="0" max="100" value="20">
+                    </div>
+                </div>
+                
+                <div class="effect-control">
+                    <h4>⚡ Distortion</h4>
+                    <div class="slider-container">
+                        <label>Drive: <span id="distortionValue">0</span>%</label>
+                        <input type="range" id="distortionSlider" min="0" max="100" value="0">
+                    </div>
+                </div>
+                
+                <div class="effect-control">
+                    <h4>🔊 Filter</h4>
+                    <div class="slider-container">
+                        <label>Cutoff: <span id="filterValue">1000</span>Hz</label>
+                        <input type="range" id="filterSlider" min="100" max="5000" value="1000">
+                    </div>
+                </div>
+                
+                <div class="effect-control">
+                    <h4>📈 ADSR Envelope</h4>
+                    <div class="slider-container">
+                        <label>Attack: <span id="attackValue">0.1</span>s</label>
+                        <input type="range" id="attackSlider" min="0.01" max="2" step="0.01" value="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="waveform-container">
+                <h3 style="color: white; margin-bottom: 15px;">📊 Real-time Waveform</h3>
+                <canvas class="waveform" id="waveformCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class RingtoneMaker {
+            constructor() {
+                this.audioContext = null;
+                this.masterGain = null;
+                this.analyser = null;
+                this.mediaRecorder = null;
+                this.recordedChunks = [];
+                this.isPlaying = false;
+                this.isRecording = false;
+                this.currentTime = 0;
+                this.tempo = 120;
+                this.notes = [];
+                this.playheadInterval = null;
+                this.selectedNotes = [];
+                
+                // Audio processing nodes
+                this.reverb = null;
+                this.filter = null;
+                this.distortion = null;
+                
+                this.init();
+            }
+
+            async init() {
+                await this.initAudio();
+                this.initUI();
+                this.setupEventListeners();
+                this.createPianoRoll();
+                this.initWaveform();
+            }
+
+            async initAudio() {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.masterGain = this.audioContext.createGain();
+                this.masterGain.gain.setValueAtTime(0.7, this.audioContext.currentTime);
+                
+                // Initialize effects
+                this.initEffects();
+                
+                // Set up analyser for waveform
+                this.analyser = this.audioContext.createAnalyser();
+                this.analyser.fftSize = 2048;
+                
+                // Connect audio chain
+                this.masterGain.connect(this.analyser);
+                this.analyser.connect(this.audioContext.destination);
+            }
+
+            initEffects() {
+                // Reverb (using convolution)
+                this.reverb = this.audioContext.createConvolver();
+                this.createReverbImpulse();
+                
+                // Filter
+                this.filter = this.audioContext.createBiquadFilter();
+                this.filter.type = 'lowpass';
+                this.filter.frequency.setValueAtTime(1000, this.audioContext.currentTime);
+                
+                // Distortion (using waveshaper)
+                this.distortion = this.audioContext.createWaveShaper();
+                this.distortion.curve = this.makeDistortionCurve(0);
+            }
+
+            createReverbImpulse() {
+                const length = this.audioContext.sampleRate * 2;
+                const impulse = this.audioContext.createBuffer(2, length, this.audioContext.sampleRate);
+                
+                for (let channel = 0; channel < 2; channel++) {
+                    const channelData = impulse.getChannelData(channel);
+                    for (let i = 0; i < length; i++) {
+                        channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2);
+                    }
+                }
+                
+                this.reverb.buffer = impulse;
+            }
+
+            makeDistortionCurve(amount) {
+                const samples = 44100;
+                const curve = new Float32Array(samples);
+                const deg = Math.PI / 180;
+                
+                for (let i = 0; i < samples; i++) {
+                    const x = (i * 2) / samples - 1;
+                    curve[i] = ((3 + amount) * x * 20 * deg) / (Math.PI + amount * Math.abs(x));
+                }
+                
+                return curve;
+            }
+
+            initUI() {
+                // Initialize all UI elements
+                this.elements = {
+                    playBtn: document.getElementById('playBtn'),
+                    stopBtn: document.getElementById('stopBtn'),
+                    recordBtn: document.getElementById('recordBtn'),
+                    exportBtn: document.getElementById('exportBtn'),
+                    clearBtn: document.getElementById('clearBtn'),
+                    tempoSlider: document.getElementById('tempoSlider'),
+                    tempoValue: document.getElementById('tempoValue'),
+                    volumeSlider: document.getElementById('volumeSlider'),
+                    volumeValue: document.getElementById('volumeValue'),
+                    lengthSlider: document.getElementById('lengthSlider'),
+                    lengthValue: document.getElementById('lengthValue'),
+                    instrumentSelect: document.getElementById('instrumentSelect'),
+                    snapSelect: document.getElementById('snapSelect'),
+                    zoomSlider: document.getElementById('zoomSlider'),
+                    gridCanvas: document.getElementById('gridCanvas'),
+                    playhead: document.getElementById('playhead'),
+                    progressFill: document.getElementById('progressFill'),
+                    waveformCanvas: document.getElementById('waveformCanvas'),
+                    // Effects
+                    reverbSlider: document.getElementById('reverbSlider'),
+                    reverbValue: document.getElementById('reverbValue'),
+                    distortionSlider: document.getElementById('distortionSlider'),
+                    distortionValue: document.getElementById('distortionValue'),
+                    filterSlider: document.getElementById('filterSlider'),
+                    filterValue: document.getElementById('filterValue'),
+                    attackSlider: document.getElementById('attackSlider'),
+                    attackValue: document.getElementById('attackValue')
+                };
+            }
+
+            setupEventListeners() {
+                // Transport controls
+                this.elements.playBtn.addEventListener('click', () => this.togglePlayback());
+                this.elements.stopBtn.addEventListener('click', () => this.stop());
+                this.elements.recordBtn.addEventListener('click', () => this.toggleRecording());
+                this.elements.exportBtn.addEventListener('click', () => this.exportMP3());
+                this.elements.clearBtn.addEventListener('click', () => this.clearAll());
+
+                // Parameter controls
+                this.elements.tempoSlider.addEventListener('input', (e) => {
+                    this.tempo = parseInt(e.target.value);
+                    this.elements.tempoValue.textContent = this.tempo;
+                });
+
+                this.elements.volumeSlider.addEventListener('input', (e) => {
+                    const volume = parseInt(e.target.value) / 100;
+                    this.masterGain.gain.setValueAtTime(volume, this.audioContext.currentTime);
+                    this.elements.volumeValue.textContent = e.target.value;
+                });
+
+                this.elements.lengthSlider.addEventListener('input', (e) => {
+                    this.elements.lengthValue.textContent = e.target.value;
+                });
+
+                // Effects controls
+                this.elements.reverbSlider.addEventListener('input', (e) => {
+                    this.elements.reverbValue.textContent = e.target.value;
+                });
+
+                this.elements.distortionSlider.addEventListener('input', (e) => {
+                    const amount = parseInt(e.target.value);
+                    this.distortion.curve = this.makeDistortionCurve(amount);
+                    this.elements.distortionValue.textContent = amount;
+                });
+
+                this.elements.filterSlider.addEventListener('input', (e) => {
+                    const freq = parseInt(e.target.value);
+                    this.filter.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+                    this.elements.filterValue.textContent = freq;
+                });
+
+                this.elements.attackSlider.addEventListener('input', (e) => {
+                    this.elements.attackValue.textContent = e.target.value;
+                });
+
+                // Pattern presets
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.loadPattern(e.target.dataset.pattern);
+                    });
+                });
+
+                // Piano roll interactions
+                this.elements.gridCanvas.addEventListener('click', (e) => this.handleGridClick(e));
+                this.elements.gridCanvas.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    this.handleGridRightClick(e);
+                });
+
+                // Piano key clicks
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('piano-key')) {
+                        this.playNote(e.target.dataset.note);
+                    }
+                });
+            }
+
+            createPianoRoll() {
+                const notes = ['C6', 'B5', 'A#5', 'A5', 'G#5', 'G5', 'F#5', 'F5', 'E5', 'D#5', 'D5', 'C#5',
+                              'C5', 'B4', 'A#4', 'A4', 'G#4', 'G4', 'F#4', 'F4', 'E4', 'D#4', 'D4', 'C#4',
+                              'C4', 'B3', 'A#3', 'A3', 'G#3', 'G3', 'F#3', 'F3', 'E3', 'D#3', 'D3'];
+
+                const pianoKeys = document.getElementById('pianoKeys');
+                const gridCanvas = this.elements.gridCanvas;
+
+                // Create piano keys
+                notes.forEach((note, index) => {
+                    const key = document.createElement('div');
+                    key.className = `piano-key ${note.includes('#') ? 'black' : ''}`;
+                    key.textContent = note;
+                    key.dataset.note = note;
+                    pianoKeys.appendChild(key);
+
+                    // Create corresponding grid row
+                    const row = document.createElement('div');
+                    row.className = 'note-row';
+                    row.style.top = `${index * 25}px`;
+                    row.dataset.note = note;
+                    gridCanvas.appendChild(row);
+                });
+
+                // Create time grid lines
+                const totalBeats = 32; // 8 measures * 4 beats
+                for (let i = 0; i <= totalBeats; i++) {
+                    const line = document.createElement('div');
+                    line.className = `grid-line ${i % 4 === 0 ? 'measure' : 'beat'}`;
+                    line.style.left = `${(i / totalBeats) * 100}%`;
+                    gridCanvas.appendChild(line);
+                }
+
+                // Create time ruler
+                const timeRuler = document.getElementById('timeRuler');
+                for (let i = 0; i <= 8; i++) {
+                    const marker = document.createElement('div');
+                    marker.className = `beat-marker ${i % 1 === 0 ? 'measure' : ''}`;
+                    marker.style.left = `${(i / 8) * 100}%`;
+                    marker.textContent = `${i + 1}`;
+                    timeRuler.appendChild(marker);
+                }
+            }
+
+            handleGridClick(e) {
+                const rect = this.elements.gridCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const noteIndex = Math.floor(y / 25);
+                const timePosition = (x / rect.width) * this.elements.lengthSlider.value;
+
+                const notes = ['C6', 'B5', 'A#5', 'A5', 'G#5', 'G5', 'F#5', 'F5', 'E5', 'D#5', 'D5', 'C#5',
+                              'C5', 'B4', 'A#4', 'A4', 'G#4', 'G4', 'F#4', 'F4', 'E4', 'D#4', 'D4', 'C#4',
+                              'C4', 'B3', 'A#3', 'A3', 'G#3', 'G3', 'F#3', 'F3', 'E3', 'D#3', 'D3'];
+
+                if (noteIndex >= 0 && noteIndex < notes.length) {
+                    const note = {
+                        id: Date.now(),
+                        note: notes[noteIndex],
+                        start: timePosition,
+                        duration: 0.5,
+                        velocity: 80
+                    };
+
+                    this.notes.push(note);
+                    this.createNoteElement(note);
+                    this.playNote(note.note);
+                }
+            }
+
+            handleGridRightClick(e) {
+                // Remove note on right click
+                const noteElement = e.target.closest('.note');
+                if (noteElement) {
+                    const noteId = parseInt(noteElement.dataset.id);
+                    this.notes = this.notes.filter(note => note.id !== noteId);
+                    noteElement.remove();
+                }
+            }
+
+            createNoteElement(note) {
+                const noteEl = document.createElement('div');
+                noteEl.className = 'note';
+                noteEl.dataset.id = note.id;
+                noteEl.textContent = note.note;
+                
+                const totalLength = this.elements.lengthSlider.value;
+                noteEl.style.left = `${(note.start / totalLength) * 100}%`;
+                noteEl.style.width = `${(note.duration / totalLength) * 100}%`;
+                
+                const noteIndex = ['C6', 'B5', 'A#5', 'A5', 'G#5', 'G5', 'F#5', 'F5', 'E5', 'D#5', 'D5', 'C#5',
+                                  'C5', 'B4', 'A#4', 'A4', 'G#4', 'G4', 'F#4', 'F4', 'E4', 'D#4', 'D4', 'C#4',
+                                  'C4', 'B3', 'A#3', 'A3', 'G#3', 'G3', 'F#3', 'F3', 'E3', 'D#3', 'D3'].indexOf(note.note);
+                noteEl.style.top = `${noteIndex * 25 + 2.5}px`;
+                
+                this.elements.gridCanvas.appendChild(noteEl);
+            }
+
+            getFrequency(note) {
+                const noteToFreq = {
+                    'C3': 130.81, 'C#3': 138.59, 'D3': 146.83, 'D#3': 155.56, 'E3': 164.81, 'F3': 174.61,
+                    'F#3': 185.00, 'G3': 196.00, 'G#3': 207.65, 'A3': 220.00, 'A#3': 233.08, 'B3': 246.94,
+                    'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23,
+                    'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
+                    'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25, 'E5': 659.25, 'F5': 698.46,
+                    'F#5': 739.99, 'G5': 783.99, 'G#5': 830.61, 'A5': 880.00, 'A#5': 932.33, 'B5': 987.77,
+                    'C6': 1046.50
+                };
+                return noteToFreq[note] || 440;
+            }
+
+            createOscillator(frequency, type, startTime, duration) {
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                // Set waveform type
+                if (type === 'piano') {
+                    // FM synthesis for piano-like sound
+                    oscillator.type = 'sine';
+                    const modulator = this.audioContext.createOscillator();
+                    const modGain = this.audioContext.createGain();
+                    
+                    modulator.frequency.setValueAtTime(frequency * 2, startTime);
+                    modGain.gain.setValueAtTime(100, startTime);
+                    
+                    modulator.connect(modGain);
+                    modGain.connect(oscillator.frequency);
+                    modulator.start(startTime);
+                    modulator.stop(startTime + duration);
+                } else if (type === 'bell') {
+                    oscillator.type = 'sine';
+                    // Add harmonics for bell-like sound
+                    const harmonic1 = this.audioContext.createOscillator();
+                    const harmonic2 = this.audioContext.createOscillator();
+                    const harmGain1 = this.audioContext.createGain();
+                    const harmGain2 = this.audioContext.createGain();
+                    
+                    harmonic1.frequency.setValueAtTime(frequency * 2.4, startTime);
+                    harmonic2.frequency.setValueAtTime(frequency * 3.2, startTime);
+                    harmGain1.gain.setValueAtTime(0.3, startTime);
+                    harmGain2.gain.setValueAtTime(0.2, startTime);
+                    
+                    harmonic1.connect(harmGain1);
+                    harmonic2.connect(harmGain2);
+                    harmGain1.connect(gainNode);
+                    harmGain2.connect(gainNode);
+                    
+                    harmonic1.start(startTime);
+                    harmonic2.start(startTime);
+                    harmonic1.stop(startTime + duration);
+                    harmonic2.stop(startTime + duration);
+                } else if (type === 'pluck') {
+                    oscillator.type = 'sawtooth';
+                    // Add filter sweep for pluck sound
+                    const pluckFilter = this.audioContext.createBiquadFilter();
+                    pluckFilter.type = 'lowpass';
+                    pluckFilter.frequency.setValueAtTime(frequency * 4, startTime);
+                    pluckFilter.frequency.exponentialRampToValueAtTime(frequency * 0.5, startTime + duration);
+                    
+                    oscillator.connect(pluckFilter);
+                    pluckFilter.connect(gainNode);
+                } else {
+                    oscillator.type = type;
+                    oscillator.connect(gainNode);
+                }
+                
+                oscillator.frequency.setValueAtTime(frequency, startTime);
+                
+                // ADSR Envelope
+                const attackTime = parseFloat(this.elements.attackSlider.value);
+                const releaseTime = duration * 0.3;
+                
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(0.8, startTime + attackTime);
+                gainNode.gain.linearRampToValueAtTime(0.6, startTime + duration - releaseTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                
+                // Connect through effects chain
+                const reverbGain = this.audioContext.createGain();
+                const dryGain = this.audioContext.createGain();
+                const reverbAmount = parseInt(this.elements.reverbSlider.value) / 100;
+                
+                reverbGain.gain.setValueAtTime(reverbAmount, startTime);
+                dryGain.gain.setValueAtTime(1 - reverbAmount, startTime);
+                
+                gainNode.connect(dryGain);
+                gainNode.connect(reverbGain);
+                reverbGain.connect(this.reverb);
+                
+                dryGain.connect(this.filter);
+                this.reverb.connect(this.filter);
+                this.filter.connect(this.distortion);
+                this.distortion.connect(this.masterGain);
+                
+                return { oscillator, gainNode };
+            }
+
+            playNote(noteName, duration = 0.5) {
+                if (this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+                
+                const frequency = this.getFrequency(noteName);
+                const instrument = this.elements.instrumentSelect.value;
+                const startTime = this.audioContext.currentTime;
+                
+                const { oscillator } = this.createOscillator(frequency, instrument, startTime, duration);
+                
+                oscillator.start(startTime);
+                oscillator.stop(startTime + duration);
+            }
+
+            async togglePlayback() {
+                if (this.isPlaying) {
+                    this.stop();
+                } else {
+                    await this.play();
+                }
+            }
+
+            async play() {
+                if (this.audioContext.state === 'suspended') {
+                    await this.audioContext.resume();
+                }
+                
+                this.isPlaying = true;
+                this.elements.playBtn.innerHTML = '⏸️ Pause';
+                this.currentTime = 0;
+                
+                const totalLength = parseFloat(this.elements.lengthSlider.value);
+                const beatsPerSecond = this.tempo / 60;
+                
+                // Sort notes by start time
+                const sortedNotes = [...this.notes].sort((a, b) => a.start - b.start);
+                
+                // Schedule all notes
+                sortedNotes.forEach(note => {
+                    const startTime = this.audioContext.currentTime + note.start;
+                    const frequency = this.getFrequency(note.note);
+                    const instrument = this.elements.instrumentSelect.value;
+                    
+                    const { oscillator } = this.createOscillator(frequency, instrument, startTime, note.duration);
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + note.duration);
+                });
+                
+                // Start playhead animation
+                this.startPlayhead(totalLength);
+                
+                // Auto-stop when finished
+                setTimeout(() => {
+                    if (this.isPlaying) {
+                        this.stop();
+                    }
+                }, totalLength * 1000);
+            }
+
+            stop() {
+                this.isPlaying = false;
+                this.elements.playBtn.innerHTML = '▶️ Play';
+                this.currentTime = 0;
+                this.stopPlayhead();
+                this.elements.progressFill.style.width = '0%';
+                this.elements.playhead.style.left = '0px';
+            }
+
+            startPlayhead(totalLength) {
+                this.playheadInterval = setInterval(() => {
+                    if (this.isPlaying) {
+                        this.currentTime += 0.1;
+                        const progress = (this.currentTime / totalLength) * 100;
+                        this.elements.progressFill.style.width = `${Math.min(progress, 100)}%`;
+                        this.elements.playhead.style.left = `${Math.min(progress, 100)}%`;
+                        
+                        if (progress >= 100) {
+                            this.stop();
+                        }
+                    }
+                }, 100);
+            }
+
+            stopPlayhead() {
+                if (this.playheadInterval) {
+                    clearInterval(this.playheadInterval);
+                    this.playheadInterval = null;
+                }
+            }
+
+            async toggleRecording() {
+                if (this.isRecording) {
+                    this.stopRecording();
+                } else {
+                    await this.startRecording();
+                }
+            }
+
+            async startRecording() {
+                const stream = this.audioContext.createMediaStreamDestination();
+                this.masterGain.connect(stream);
+                
+                this.mediaRecorder = new MediaRecorder(stream.stream);
+                this.recordedChunks = [];
+                
+                this.mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        this.recordedChunks.push(event.data);
+                    }
+                };
+                
+                this.mediaRecorder.start();
+                this.isRecording = true;
+                this.elements.recordBtn.innerHTML = '⏹️ Stop Rec';
+                this.elements.recordBtn.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
+                
+                // Auto-play while recording
+                await this.play();
+            }
+
+            stopRecording() {
+                if (this.mediaRecorder && this.isRecording) {
+                    this.mediaRecorder.stop();
+                    this.isRecording = false;
+                    this.elements.recordBtn.innerHTML = '🔴 Record';
+                    this.elements.recordBtn.style.background = 'linear-gradient(135deg, #6c757d, #495057)';
+                    this.stop();
+                }
+            }
+
+            exportMP3() {
+                if (this.recordedChunks.length > 0) {
+                    const blob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `ringtone_${Date.now()}.webm`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                } else {
+                    // Record and export automatically
+                    this.startRecording().then(() => {
+                        setTimeout(() => {
+                            this.stopRecording();
+                            setTimeout(() => this.exportMP3(), 500);
+                        }, parseFloat(this.elements.lengthSlider.value) * 1000);
+                    });
+                }
+            }
+
+            clearAll() {
+                this.notes = [];
+                this.stop();
+                
+                // Remove all note elements
+                const noteElements = this.elements.gridCanvas.querySelectorAll('.note');
+                noteElements.forEach(el => el.remove());
+                
+                this.recordedChunks = [];
+            }
+
+            loadPattern(patternName) {
+                this.clearAll();
+                
+                const patterns = {
+                    scale: [
+                        { note: 'C4', start: 0, duration: 0.5 },
+                        { note: 'D4', start: 0.5, duration: 0.5 },
+                        { note: 'E4', start: 1, duration: 0.5 },
+                        { note: 'F4', start: 1.5, duration: 0.5 },
+                        { note: 'G4', start: 2, duration: 0.5 },
+                        { note: 'A4', start: 2.5, duration: 0.5 },
+                        { note: 'B4', start: 3, duration: 0.5 },
+                        { note: 'C5', start: 3.5, duration: 1 }
+                    ],
+                    chord: [
+                        { note: 'C4', start: 0, duration: 2 },
+                        { note: 'E4', start: 0, duration: 2 },
+                        { note: 'G4', start: 0, duration: 2 },
+                        { note: 'C5', start: 2, duration: 2 },
+                        { note: 'E5', start: 2, duration: 2 },
+                        { note: 'G5', start: 2, duration: 2 }
+                    ],
+                    melody: [
+                        { note: 'E5', start: 0, duration: 0.25 },
+                        { note: 'D5', start: 0.25, duration: 0.25 },
+                        { note: 'C5', start: 0.5, duration: 0.5 },
+                        { note: 'D5', start: 1, duration: 0.25 },
+                        { note: 'E5', start: 1.25, duration: 0.25 },
+                        { note: 'E5', start: 1.5, duration: 0.5 },
+                        { note: 'E5', start: 2, duration: 0.5 }
+                    ],
+                    ringtone: [
+                        { note: 'G5', start: 0, duration: 0.2 },
+                        { note: 'E5', start: 0.3, duration: 0.2 },
+                        { note: 'G5', start: 0.6, duration: 0.2 },
+                        { note: 'E5', start: 0.9, duration: 0.2 },
+                        { note: 'G5', start: 1.5, duration: 0.2 },
+                        { note: 'E5', start: 1.8, duration: 0.2 },
+                        { note: 'G5', start: 2.1, duration: 0.2 },
+                        { note: 'E5', start: 2.4, duration: 0.2 }
+                    ],
+                    notification: [
+                        { note: 'C5', start: 0, duration: 0.15 },
+                        { note: 'E5', start: 0.2, duration: 0.15 },
+                        { note: 'G5', start: 0.4, duration: 0.3 }
+                    ],
+                    alarm: [
+                        { note: 'A5', start: 0, duration: 0.5 },
+                        { note: 'A5', start: 0.6, duration: 0.5 },
+                        { note: 'A5', start: 1.2, duration: 0.5 },
+                        { note: 'F5', start: 2, duration: 0.8 },
+                        { note: 'A5', start: 3, duration: 0.5 },
+                        { note: 'A5', start: 3.6, duration: 0.5 },
+                        { note: 'A5', start: 4.2, duration: 0.5 },
+                        { note: 'F5', start: 5, duration: 0.8 }
+                    ]
+                };
+                
+                if (patterns[patternName]) {
+                    patterns[patternName].forEach(noteData => {
+                        const note = {
+                            id: Date.now() + Math.random(),
+                            note: noteData.note,
+                            start: noteData.start,
+                            duration: noteData.duration,
+                            velocity: 80
+                        };
+                        this.notes.push(note);
+                        this.createNoteElement(note);
+                    });
+                }
+            }
+
+            initWaveform() {
+                const canvas = this.elements.waveformCanvas;
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas size
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                
+                const bufferLength = this.analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                
+                const draw = () => {
+                    requestAnimationFrame(draw);
+                    
+                    this.analyser.getByteTimeDomainData(dataArray);
+                    
+                    ctx.fillStyle = '#1a1a1a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#007AFF';
+                    ctx.beginPath();
+                    
+                    const sliceWidth = canvas.width / bufferLength;
+                    let x = 0;
+                    
+                    for (let i = 0; i < bufferLength; i++) {
+                        const v = dataArray[i] / 128.0;
+                        const y = v * canvas.height / 2;
+                        
+                        if (i === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                        
+                        x += sliceWidth;
+                    }
+                    
+                    ctx.stroke();
+                    
+                    // Add frequency spectrum
+                    this.analyser.getByteFrequencyData(dataArray);
+                    ctx.fillStyle = 'rgba(0, 122, 255, 0.3)';
+                    
+                    const barWidth = canvas.width / bufferLength * 2;
+                    let barHeight;
+                    x = 0;
+                    
+                    for (let i = 0; i < bufferLength / 2; i++) {
+                        barHeight = dataArray[i] / 255 * canvas.height / 2;
+                        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                        x += barWidth + 1;
+                    }
+                };
+                
+                draw();
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new RingtoneMaker();
+        });
+
+        // Add some visual enhancements
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.querySelector('.cursor');
+            if (!cursor) {
+                const cursorEl = document.createElement('div');
+                cursorEl.className = 'cursor';
+                cursorEl.style.cssText = `
+                    position: fixed;
+                    width: 20px;
+                    height: 20px;
+                    background: radial-gradient(circle, rgba(0,122,255,0.8), transparent);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    transition: transform 0.1s ease;
+                `;
+                document.body.appendChild(cursorEl);
+            }
+            
+            const cursorElement = document.querySelector('.cursor');
+            cursorElement.style.left = e.clientX - 10 + 'px';
+            cursorElement.style.top = e.clientY - 10 + 'px';
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                document.getElementById('playBtn').click();
+            } else if (e.code === 'Escape') {
+                document.getElementById('stopBtn').click();
+            } else if (e.code === 'KeyR' && e.ctrlKey) {
+                e.preventDefault();
+                document.getElementById('recordBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>
