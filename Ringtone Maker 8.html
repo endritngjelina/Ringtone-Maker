@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringtone Maker Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            position: relative;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3.2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ffffff, #f8f9fa, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+            font-weight: 400;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            box-shadow: 
+                0 32px 64px rgba(0,0,0,0.15),
+                0 0 0 1px rgba(255,255,255,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+            position: relative;
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        .main-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls-section {
+            padding: 30px;
+            background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            background: linear-gradient(145deg, #ffffff, #fafbfc);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.08),
+                0 0 0 1px rgba(255,255,255,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-group::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .control-group:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 16px 48px rgba(0,0,0,0.12),
+                0 0 0 1px rgba(102,126,234,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+
+        .control-group:hover::before {
+            transform: scaleX(1);
+        }
+
+        .control-group h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group h3::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .slider-container {
+            margin-bottom: 15px;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 6px;
+            background: linear-gradient(to right, #e9ecef, #f8f9fa);
+            outline: none;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .slider:hover {
+            background: linear-gradient(to right, #dee2e6, #e9ecef);
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            box-shadow: 
+                0 4px 12px rgba(102,126,234,0.3),
+                0 0 0 4px rgba(255,255,255,0.8),
+                0 0 0 6px rgba(102,126,234,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 
+                0 6px 20px rgba(102,126,234,0.4),
+                0 0 0 6px rgba(255,255,255,1),
+                0 0 0 8px rgba(102,126,234,0.15);
+        }
+
+        .slider::-webkit-slider-thumb:active {
+            transform: scale(0.95);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 
+                0 8px 24px rgba(102, 126, 234, 0.3),
+                0 0 0 1px rgba(255,255,255,0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 32px rgba(102, 126, 234, 0.4),
+                0 0 0 1px rgba(255,255,255,0.2);
+            background: linear-gradient(135deg, #7c8cea, #8a5cb2);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            box-shadow: 0 4px 16px rgba(108, 117, 125, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.25);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #20c997, #17a2b8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(40, 167, 69, 0.35);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            color: white;
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.25);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #e83e8c, #fd7e14);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(220, 53, 69, 0.35);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .piano-roll-container {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .piano-roll-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .piano-roll-header h2 {
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .piano-roll {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .piano-roll-grid {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .piano-keys {
+            background: #2c3e50;
+            border-right: 2px solid #34495e;
+        }
+
+        .piano-roll {
+            background: linear-gradient(145deg, #ffffff, #fafbfc);
+            border-radius: 16px;
+            box-shadow: 
+                0 16px 48px rgba(0,0,0,0.12),
+                0 0 0 1px rgba(255,255,255,0.5),
+                inset 0 2px 4px rgba(255,255,255,0.8);
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .piano-key {
+            height: 30px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid #34495e;
+            position: relative;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .piano-key::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: scaleY(0);
+            transition: transform 0.2s ease;
+            transform-origin: bottom;
+        }
+
+        .piano-key:hover {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            transform: translateX(4px);
+            box-shadow: 4px 0 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .piano-key:hover::before {
+            transform: scaleY(1);
+        }
+
+        .piano-key.black {
+            background: linear-gradient(135deg, #1a252f, #2c3e50);
+            color: #ecf0f1;
+        }
+
+        .piano-key.black:hover {
+            background: linear-gradient(90deg, #2980b9, #3498db);
+            color: white;
+        }
+
+        .grid-area {
+            position: relative;
+            background: linear-gradient(to right, #f8f9fa 0%, #f8f9fa 50%, #e9ecef 50%, #e9ecef 100%);
+            background-size: 40px 100%;
+        }
+
+        .grid-row {
+            height: 30px;
+            position: relative;
+            border-bottom: 1px solid #dee2e6;
+            cursor: crosshair;
+        }
+
+        .grid-row:nth-child(odd) {
+            background: rgba(248, 249, 250, 0.5);
+        }
+
+        .note-block {
+            position: absolute;
+            height: 26px;
+            top: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 
+                0 4px 12px rgba(102,126,234,0.3),
+                0 0 0 1px rgba(255,255,255,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.4), transparent);
+        }
+
+        .note-block::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .note-block:hover {
+            transform: scale(1.05) translateY(-1px);
+            box-shadow: 
+                0 8px 24px rgba(102,126,234,0.4),
+                0 0 0 2px rgba(255,255,255,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.4);
+            background: linear-gradient(135deg, #7c89ea, #8a66b2);
+        }
+
+        .note-block:hover::after {
+            opacity: 1;
+        }
+
+        .note-block.selected {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            box-shadow: 
+                0 0 0 3px rgba(255, 107, 107, 0.3),
+                0 6px 20px rgba(255, 107, 107, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 
+                    0 0 0 3px rgba(255, 107, 107, 0.3),
+                    0 6px 20px rgba(255, 107, 107, 0.4),
+                    inset 0 1px 0 rgba(255,255,255,0.4);
+            }
+            50% {
+                box-shadow: 
+                    0 0 0 6px rgba(255, 107, 107, 0.2),
+                    0 8px 24px rgba(255, 107, 107, 0.5),
+                    inset 0 1px 0 rgba(255,255,255,0.4);
+            }
+        }
+
+        .playback-indicator {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(135deg, #e74c3c, #ff6b6b);
+            z-index: 20;
+            transition: left 0.1s linear;
+            box-shadow: 
+                0 0 12px rgba(231, 76, 60, 0.8),
+                0 0 20px rgba(231, 76, 60, 0.4),
+                2px 0 8px rgba(231, 76, 60, 0.3);
+            border-radius: 2px;
+        }
+
+        .playback-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
+            animation: playbackPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes playbackPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.7;
+            }
+        }
+
+        .waveform-container {
+            padding: 20px 30px;
+            background: white;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .waveform {
+            width: 100%;
+            height: 100px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .waveform-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .preset-section {
+            padding: 20px 30px;
+            background: linear-gradient(90deg, #e9ecef, #f8f9fa);
+            border-top: 1px solid #dee2e6;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .preset-card {
+            background: linear-gradient(145deg, #ffffff, #fafbfc);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 
+                0 6px 24px rgba(0,0,0,0.08),
+                0 0 0 1px rgba(255,255,255,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(102, 126, 234, 0.05);
+        }
+
+        .preset-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .preset-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 
+                0 16px 48px rgba(0,0,0,0.15),
+                0 0 0 1px rgba(102,126,234,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+
+        .preset-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .preset-card:active {
+            transform: translateY(-2px);
+        }
+
+        .preset-card h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .preset-card p {
+            color: #6c757d;
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .status-bar {
+            padding: 15px 30px;
+            background: #343a40;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .status-info {
+            display: flex;
+            gap: 20px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close:hover {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .status-bar {
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .status-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+        }
+
+        .status-info {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .status-info span {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Enhanced input and select styling */
+        input[type="text"], select {
+            width: 100%;
+            padding: 14px 16px;
+            margin-top: 8px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            background: linear-gradient(145deg, #ffffff, #fafbfc);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 2px 8px rgba(0,0,0,0.05),
+                inset 0 1px 2px rgba(255,255,255,0.8);
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 
+                0 0 0 4px rgba(102, 126, 234, 0.1),
+                0 4px 16px rgba(102, 126, 234, 0.15),
+                inset 0 1px 2px rgba(255,255,255,0.8);
+            background: #ffffff;
+        }
+
+        /* Enhanced timeline styling */
+        .timeline {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: linear-gradient(145deg, #ffffff, #fafbfc);
+            padding: 18px 24px;
+            border-radius: 12px;
+            box-shadow: 
+                0 4px 16px rgba(0,0,0,0.08),
+                0 0 0 1px rgba(255,255,255,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            border: 1px solid rgba(102, 126, 234, 0.08);
+        }
+
+        /* Enhanced waveform styling */
+        .waveform {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(145deg, #f8f9fa, #ffffff);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 4px 8px rgba(0,0,0,0.1),
+                0 0 0 1px rgba(255,255,255,0.5);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        /* Add subtle animations to various elements */
+        .control-group, .preset-card, .btn {
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .control-group:nth-child(1) { animation-delay: 0.1s; }
+        .control-group:nth-child(2) { animation-delay: 0.2s; }
+        .control-group:nth-child(3) { animation-delay: 0.3s; }
+        .control-group:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced grid styling */
+        .grid-area {
+            position: relative;
+            background: 
+                linear-gradient(to right, rgba(102, 126, 234, 0.03) 0%, rgba(102, 126, 234, 0.03) 50%, rgba(102, 126, 234, 0.06) 50%, rgba(102, 126, 234, 0.06) 100%),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(248, 249, 250, 0.9));
+            background-size: 40px 100%, 100% 100%;
+        }
+
+        .grid-row {
+            height: 30px;
+            position: relative;
+            border-bottom: 1px solid rgba(222, 226, 230, 0.8);
+            cursor: crosshair;
+            transition: background-color 0.2s ease;
+        }
+
+        .grid-row:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        .grid-row:nth-child(odd) {
+            background: rgba(248, 249, 250, 0.3);
+        }
+
+        /* Enhanced section backgrounds */
+        .controls-section {
+            padding: 36px;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-bottom: 1px solid rgba(222, 226, 230, 0.5);
+            position: relative;
+        }
+
+        .piano-roll-container {
+            padding: 36px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            position: relative;
+        }
+
+        .waveform-container {
+            padding: 28px 36px;
+            background: linear-gradient(135deg, #fafbfc, #ffffff);
+            border-top: 1px solid rgba(222, 226, 230, 0.5);
+        }
+
+        .preset-section {
+            padding: 28px 36px;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-top: 1px solid rgba(222, 226, 230, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .piano-roll-grid {
+                grid-template-columns: 60px 1fr;
+            }
+            
+            .piano-key {
+                font-size: 10px;
+                padding: 0 8px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #ffffff, #fafbfc);
+            margin: 5% auto;
+            padding: 32px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 520px;
+            box-shadow: 
+                0 32px 64px rgba(0,0,0,0.25),
+                0 0 0 1px rgba(255,255,255,0.5),
+                inset 0 2px 4px rgba(255,255,255,0.8);
+            position: relative;
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 20px 20px 0 0;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .close {
+            color: #6c757d;
+            font-size: 32px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(108, 117, 125, 0.1);
+        }
+
+        .close:hover {
+            color: #343a40;
+            background: rgba(108, 117, 125, 0.2);
+            transform: scale(1.1);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Ringtone Maker Pro</h1>
+            <p>Create custom ringtones and notification sounds with professional-grade tools</p>
+        </div>
+
+        <div class="main-panel">
+            <div class="controls-section">
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <h3>🎼 Composition</h3>
+                        <div class="slider-container">
+                            <label>Tempo (BPM): <span id="tempoValue">120</span></label>
+                            <input type="range" id="tempoSlider" class="slider" min="60" max="200" value="120">
+                        </div>
+                        <div class="slider-container">
+                            <label>Duration (seconds): <span id="durationValue">10</span></label>
+                            <input type="range" id="durationSlider" class="slider" min="5" max="30" value="10">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>🎛️ Audio Settings</h3>
+                        <div class="slider-container">
+                            <label>Master Volume: <span id="volumeValue">70</span>%</label>
+                            <input type="range" id="volumeSlider" class="slider" min="0" max="100" value="70">
+                        </div>
+                        <div class="slider-container">
+                            <label>Reverb: <span id="reverbValue">20</span>%</label>
+                            <input type="range" id="reverbSlider" class="slider" min="0" max="100" value="20">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>🎹 Instrument</h3>
+                        <select id="instrumentSelect" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ced4da; margin-bottom: 10px;">
+                            <option value="sine">Piano (Sine)</option>
+                            <option value="sawtooth">Synth (Sawtooth)</option>
+                            <option value="square">Retro (Square)</option>
+                            <option value="triangle">Soft (Triangle)</option>
+                        </select>
+                        <div class="slider-container">
+                            <label>Attack: <span id="attackValue">0.1</span>s</label>
+                            <input type="range" id="attackSlider" class="slider" min="0" max="2" step="0.1" value="0.1">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>⚡ Quick Actions</h3>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn btn-primary" id="playBtn">▶️ Play</button>
+                            <button class="btn btn-secondary" id="stopBtn">⏹️ Stop</button>
+                            <button class="btn btn-secondary" id="clearBtn">🗑️ Clear</button>
+                            <button class="btn btn-success" id="exportBtn">💾 Export MP3</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="piano-roll-container">
+                <div class="piano-roll-header">
+                    <h2>🎹 Piano Roll Editor</h2>
+                    <div class="timeline">
+                        <span>Timeline:</span>
+                        <button class="btn btn-primary" id="quantizeBtn">📐 Quantize</button>
+                        <button class="btn btn-secondary" id="undoBtn">↶ Undo</button>
+                        <button class="btn btn-secondary" id="redoBtn">↷ Redo</button>
+                    </div>
+                </div>
+
+                <div class="piano-roll">
+                    <div class="piano-roll-grid" id="pianoRollGrid">
+                        <div class="piano-keys" id="pianoKeys"></div>
+                        <div class="grid-area" id="gridArea">
+                            <div class="playback-indicator" id="playbackIndicator"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="waveform-container">
+                <h3 style="margin-bottom: 15px; color: #495057;">📊 Waveform Preview</h3>
+                <div class="waveform">
+                    <canvas class="waveform-canvas" id="waveformCanvas"></canvas>
+                </div>
+            </div>
+
+            <div class="preset-section">
+                <h3 style="color: #495057; margin-bottom: 0;">🎵 Preset Melodies</h3>
+                <div class="preset-grid">
+                    <div class="preset-card" data-preset="classic">
+                        <h4>Classic Ring</h4>
+                        <p>Traditional phone melody</p>
+                    </div>
+                    <div class="preset-card" data-preset="modern">
+                        <h4>Modern Chime</h4>
+                        <p>Contemporary notification</p>
+                    </div>
+                    <div class="preset-card" data-preset="gentle">
+                        <h4>Gentle Wake</h4>
+                        <p>Soft morning alarm</p>
+                    </div>
+                    <div class="preset-card" data-preset="energetic">
+                        <h4>Energetic Beat</h4>
+                        <p>High-energy ringtone</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <div class="status-info">
+                    <span>Notes: <span id="noteCount">0</span></span>
+                    <span>Length: <span id="trackLength">0.0s</span></span>
+                    <span id="playbackStatus">Ready</span>
+                </div>
+                <div>
+                    <span id="loadingIndicator"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Export Ringtone</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div>
+                <p style="margin-bottom: 20px;">Choose your export settings:</p>
+                <div style="margin-bottom: 15px;">
+                    <label>Filename:</label>
+                    <input type="text" id="filenameInput" style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ced4da;" value="my_ringtone">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label>Quality:</label>
+                    <select id="qualitySelect" style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ced4da;">
+                        <option value="128">128 kbps (Standard)</option>
+                        <option value="192">192 kbps (High)</option>
+                        <option value="320">320 kbps (Premium)</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn btn-secondary" id="cancelExport">Cancel</button>
+                    <button class="btn btn-success" id="confirmExport">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class RingtoneMaker {
+            constructor() {
+                this.audioContext = null;
+                this.notes = [];
+                this.isPlaying = false;
+                this.playbackStartTime = 0;
+                this.currentPlaybackTime = 0;
+                this.gridWidth = 800;
+                this.noteWidth = 20;
+                this.selectedNotes = [];
+                this.history = [];
+                this.historyIndex = -1;
+                this.setupAudio();
+                this.setupUI();
+                this.setupEventListeners();
+                this.generatePianoKeys();
+                this.updateWaveform();
+            }
+
+            setupAudio() {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.masterGain = this.audioContext.createGain();
+                this.reverbNode = this.audioContext.createConvolver();
+                this.masterGain.connect(this.audioContext.destination);
+            }
+
+            setupUI() {
+                this.elements = {
+                    tempoSlider: document.getElementById('tempoSlider'),
+                    tempoValue: document.getElementById('tempoValue'),
+                    durationSlider: document.getElementById('durationSlider'),
+                    durationValue: document.getElementById('durationValue'),
+                    volumeSlider: document.getElementById('volumeSlider'),
+                    volumeValue: document.getElementById('volumeValue'),
+                    reverbSlider: document.getElementById('reverbSlider'),
+                    reverbValue: document.getElementById('reverbValue'),
+                    attackSlider: document.getElementById('attackSlider'),
+                    attackValue: document.getElementById('attackValue'),
+                    instrumentSelect: document.getElementById('instrumentSelect'),
+                    playBtn: document.getElementById('playBtn'),
+                    stopBtn: document.getElementById('stopBtn'),
+                    clearBtn: document.getElementById('clearBtn'),
+                    exportBtn: document.getElementById('exportBtn'),
+                    gridArea: document.getElementById('gridArea'),
+                    playbackIndicator: document.getElementById('playbackIndicator'),
+                    noteCount: document.getElementById('noteCount'),
+                    trackLength: document.getElementById('trackLength'),
+                    playbackStatus: document.getElementById('playbackStatus'),
+                    waveformCanvas: document.getElementById('waveformCanvas'),
+                    exportModal: document.getElementById('exportModal'),
+                    filenameInput: document.getElementById('filenameInput'),
+                    qualitySelect: document.getElementById('qualitySelect')
+                };
+            }
+
+            setupEventListeners() {
+                // Slider updates
+                this.elements.tempoSlider.addEventListener('input', (e) => {
+                    this.elements.tempoValue.textContent = e.target.value;
+                });
+
+                this.elements.durationSlider.addEventListener('input', (e) => {
+                    this.elements.durationValue.textContent = e.target.value;
+                    this.updateGridWidth();
+                });
+
+                this.elements.volumeSlider.addEventListener('input', (e) => {
+                    this.elements.volumeValue.textContent = e.target.value;
+                    this.masterGain.gain.value = e.target.value / 100;
+                });
+
+                this.elements.reverbSlider.addEventListener('input', (e) => {
+                    this.elements.reverbValue.textContent = e.target.value;
+                });
+
+                this.elements.attackSlider.addEventListener('input', (e) => {
+                    this.elements.attackValue.textContent = e.target.value;
+                });
+
+                // Control buttons
+                this.elements.playBtn.addEventListener('click', () => this.play());
+                this.elements.stopBtn.addEventListener('click', () => this.stop());
+                this.elements.clearBtn.addEventListener('click', () => this.clear());
+                this.elements.exportBtn.addEventListener('click', () => this.showExportModal());
+
+                // Grid interaction
+                this.elements.gridArea.addEventListener('click', (e) => this.handleGridClick(e));
+                this.elements.gridArea.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    this.handleGridRightClick(e);
+                });
+
+                // Preset cards
+                document.querySelectorAll('.preset-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        this.loadPreset(card.dataset.preset);
+                    });
+                });
+
+                // Modal controls
+                document.querySelector('.close').addEventListener('click', () => {
+                    this.elements.exportModal.style.display = 'none';
+                });
+
+                document.getElementById('cancelExport').addEventListener('click', () => {
+                    this.elements.exportModal.style.display = 'none';
+                });
+
+                document.getElementById('confirmExport').addEventListener('click', () => {
+                    this.exportAudio();
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === ' ') {
+                        e.preventDefault();
+                        this.isPlaying ? this.stop() : this.play();
+                    } else if (e.key === 'Delete') {
+                        this.deleteSelectedNotes();
+                    } else if (e.ctrlKey && e.key === 'z') {
+                        e.preventDefault();
+                        this.undo();
+                    } else if (e.ctrlKey && e.key === 'y') {
+                        e.preventDefault();
+                        this.redo();
+                    }
+                });
+
+                // Quantize and history buttons
+                document.getElementById('quantizeBtn').addEventListener('click', () => this.quantizeNotes());
+                document.getElementById('undoBtn').addEventListener('click', () => this.undo());
+                document.getElementById('redoBtn').addEventListener('click', () => this.redo());
+            }
+
+            generatePianoKeys() {
+                const pianoKeys = document.getElementById('pianoKeys');
+                const gridArea = this.elements.gridArea;
+                
+                // Generate 3 octaves starting from C4
+                const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+                const octaves = [6, 5, 4]; // Reverse order for piano roll
+                
+                octaves.forEach(octave => {
+                    for (let i = noteNames.length - 1; i >= 0; i--) {
+                        const noteName = noteNames[i];
+                        const isBlack = noteName.includes('#');
+                        
+                        // Piano key
+                        const keyDiv = document.createElement('div');
+                        keyDiv.className = `piano-key ${isBlack ? 'black' : ''}`;
+                        keyDiv.textContent = `${noteName}${octave}`;
+                        keyDiv.addEventListener('click', () => this.playNote(noteName, octave));
+                        pianoKeys.appendChild(keyDiv);
+                        
+                        // Grid row
+                        const rowDiv = document.createElement('div');
+                        rowDiv.className = 'grid-row';
+                        rowDiv.dataset.note = `${noteName}${octave}`;
+                        gridArea.appendChild(rowDiv);
+                    }
+                });
+                
+                this.updateGridWidth();
+            }
+
+            updateGridWidth() {
+                const duration = parseInt(this.elements.durationSlider.value);
+                this.gridWidth = duration * 40; // 40px per second
+                const gridRows = document.querySelectorAll('.grid-row');
+                gridRows.forEach(row => {
+                    row.style.width = `${this.gridWidth}px`;
+                });
+            }
+
+            handleGridClick(e) {
+                if (e.target.classList.contains('note-block')) {
+                    this.selectNote(e.target);
+                    return;
+                }
+                
+                const row = e.target.closest('.grid-row');
+                if (!row) return;
+                
+                const rect = row.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const noteData = row.dataset.note;
+                const time = (x / this.gridWidth) * parseInt(this.elements.durationSlider.value);
+                
+                this.addNote(noteData, time, 0.5); // 0.5 second duration
+            }
+
+            handleGridRightClick(e) {
+                if (e.target.classList.contains('note-block')) {
+                    this.removeNote(e.target);
+                }
+            }
+
+            addNote(noteData, time, duration) {
+                this.saveState();
+                const note = {
+                    id: Date.now() + Math.random(),
+                    note: noteData,
+                    time: Math.max(0, time),
+                    duration: duration,
+                    velocity: 0.7
+                };
+                
+                this.notes.push(note);
+                this.renderNote(note);
+                this.updateStatus();
+                this.updateWaveform();
+            }
+
+            renderNote(noteData) {
+                const row = document.querySelector(`[data-note="${noteData.note}"]`);
+                if (!row) return;
+                
+                const noteBlock = document.createElement('div');
+                noteBlock.className = 'note-block';
+                noteBlock.dataset.noteId = noteData.id;
+                
+                const duration = parseInt(this.elements.durationSlider.value);
+                const left = (noteData.time / duration) * this.gridWidth;
+                const width = Math.max(10, (noteData.duration / duration) * this.gridWidth);
+                
+                noteBlock.style.left = `${left}px`;
+                noteBlock.style.width = `${width}px`;
+                
+                noteBlock.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.selectNote(noteBlock);
+                });
+                
+                row.appendChild(noteBlock);
+            }
+
+            selectNote(noteBlock) {
+                // Clear previous selection
+                document.querySelectorAll('.note-block.selected').forEach(block => {
+                    block.classList.remove('selected');
+                });
+                
+                noteBlock.classList.add('selected');
+                this.selectedNotes = [noteBlock.dataset.noteId];
+            }
+
+            removeNote(noteBlock) {
+                const noteId = noteBlock.dataset.noteId;
+                this.notes = this.notes.filter(note => note.id != noteId);
+                noteBlock.remove();
+                this.updateStatus();
+                this.updateWaveform();
+            }
+
+            deleteSelectedNotes() {
+                this.selectedNotes.forEach(noteId => {
+                    const noteBlock = document.querySelector(`[data-note-id="${noteId}"]`);
+                    if (noteBlock) {
+                        this.removeNote(noteBlock);
+                    }
+                });
+                this.selectedNotes = [];
+            }
+
+            playNote(noteName, octave) {
+                const frequency = this.getFrequency(noteName, octave);
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.type = this.elements.instrumentSelect.value;
+                oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
+                
+                const attack = parseFloat(this.elements.attackSlider.value);
+                gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, this.audioContext.currentTime + attack);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.masterGain);
+                
+                oscillator.start();
+                oscillator.stop(this.audioContext.currentTime + 0.5);
+            }
+
+            getFrequency(noteName, octave) {
+                const noteFrequencies = {
+                    'C': 261.63, 'C#': 277.18, 'D': 293.66, 'D#': 311.13,
+                    'E': 329.63, 'F': 349.23, 'F#': 369.99, 'G': 392.00,
+                    'G#': 415.30, 'A': 440.00, 'A#': 466.16, 'B': 493.88
+                };
+                
+                const baseFreq = noteFrequencies[noteName];
+                return baseFreq * Math.pow(2, octave - 4);
+            }
+
+            async play() {
+                if (this.audioContext.state === 'suspended') {
+                    await this.audioContext.resume();
+                }
+                
+                if (this.isPlaying) {
+                    this.stop();
+                    return;
+                }
+                
+                if (this.notes.length === 0) {
+                    this.elements.playbackStatus.textContent = 'No notes to play';
+                    return;
+                }
+                
+                this.isPlaying = true;
+                this.playbackStartTime = this.audioContext.currentTime;
+                this.elements.playBtn.textContent = '⏸️ Pause';
+                this.elements.playbackStatus.textContent = 'Playing...';
+                
+                // Sort notes by time
+                const sortedNotes = [...this.notes].sort((a, b) => a.time - b.time);
+                
+                // Schedule all notes
+                sortedNotes.forEach(noteData => {
+                    this.scheduleNote(noteData);
+                });
+                
+                // Update playback indicator
+                this.updatePlaybackIndicator();
+                
+                // Stop after duration
+                const duration = parseInt(this.elements.durationSlider.value);
+                setTimeout(() => {
+                    if (this.isPlaying) {
+                        this.stop();
+                    }
+                }, duration * 1000);
+            }
+
+            scheduleNote(noteData) {
+                const [noteName, octave] = this.parseNote(noteData.note);
+                const frequency = this.getFrequency(noteName, parseInt(octave));
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                const filterNode = this.audioContext.createBiquadFilter();
+                
+                // Configure oscillator
+                oscillator.type = this.elements.instrumentSelect.value;
+                oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
+                
+                // Configure filter for more realistic sound
+                filterNode.type = 'lowpass';
+                filterNode.frequency.setValueAtTime(frequency * 4, this.audioContext.currentTime);
+                filterNode.Q.setValueAtTime(1, this.audioContext.currentTime);
+                
+                // Configure envelope
+                const startTime = this.playbackStartTime + noteData.time;
+                const attack = parseFloat(this.elements.attackSlider.value);
+                const release = 0.3;
+                
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(noteData.velocity * 0.5, startTime + attack);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + noteData.duration - release);
+                
+                // Connect nodes
+                oscillator.connect(filterNode);
+                filterNode.connect(gainNode);
+                gainNode.connect(this.masterGain);
+                
+                // Schedule playback
+                oscillator.start(startTime);
+                oscillator.stop(startTime + noteData.duration);
+            }
+
+            parseNote(noteString) {
+                const match = noteString.match(/([A-G]#?)(\d+)/);
+                return match ? [match[1], match[2]] : ['C', '4'];
+            }
+
+            updatePlaybackIndicator() {
+                if (!this.isPlaying) return;
+                
+                const elapsed = this.audioContext.currentTime - this.playbackStartTime;
+                const duration = parseInt(this.elements.durationSlider.value);
+                const progress = Math.min(elapsed / duration, 1);
+                
+                this.elements.playbackIndicator.style.left = `${progress * this.gridWidth}px`;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(() => this.updatePlaybackIndicator());
+                }
+            }
+
+            stop() {
+                this.isPlaying = false;
+                this.elements.playBtn.textContent = '▶️ Play';
+                this.elements.playbackStatus.textContent = 'Stopped';
+                this.elements.playbackIndicator.style.left = '0px';
+            }
+
+            clear() {
+                this.saveState();
+                this.notes = [];
+                document.querySelectorAll('.note-block').forEach(block => block.remove());
+                this.selectedNotes = [];
+                this.updateStatus();
+                this.updateWaveform();
+            }
+
+            quantizeNotes() {
+                this.saveState();
+                const quantizeValue = 0.25; // Quarter note quantization
+                
+                this.notes.forEach(note => {
+                    note.time = Math.round(note.time / quantizeValue) * quantizeValue;
+                });
+                
+                this.rerenderAllNotes();
+                this.updateWaveform();
+            }
+
+            rerenderAllNotes() {
+                document.querySelectorAll('.note-block').forEach(block => block.remove());
+                this.notes.forEach(note => this.renderNote(note));
+            }
+
+            saveState() {
+                this.history = this.history.slice(0, this.historyIndex + 1);
+                this.history.push(JSON.parse(JSON.stringify(this.notes)));
+                this.historyIndex++;
+                
+                // Limit history size
+                if (this.history.length > 50) {
+                    this.history.shift();
+                    this.historyIndex--;
+                }
+            }
+
+            undo() {
+                if (this.historyIndex > 0) {
+                    this.historyIndex--;
+                    this.notes = JSON.parse(JSON.stringify(this.history[this.historyIndex]));
+                    this.rerenderAllNotes();
+                    this.updateStatus();
+                    this.updateWaveform();
+                }
+            }
+
+            redo() {
+                if (this.historyIndex < this.history.length - 1) {
+                    this.historyIndex++;
+                    this.notes = JSON.parse(JSON.stringify(this.history[this.historyIndex]));
+                    this.rerenderAllNotes();
+                    this.updateStatus();
+                    this.updateWaveform();
+                }
+            }
+
+            updateStatus() {
+                this.elements.noteCount.textContent = this.notes.length;
+                const maxTime = this.notes.reduce((max, note) => 
+                    Math.max(max, note.time + note.duration), 0);
+                this.elements.trackLength.textContent = maxTime.toFixed(1) + 's';
+            }
+
+            updateWaveform() {
+                const canvas = this.elements.waveformCanvas;
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas size
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                
+                // Clear canvas
+                ctx.fillStyle = '#f8f9fa';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                if (this.notes.length === 0) return;
+                
+                // Draw waveform representation
+                const duration = parseInt(this.elements.durationSlider.value);
+                const samples = canvas.width;
+                const sampleRate = samples / duration;
+                
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                for (let i = 0; i < samples; i++) {
+                    const time = i / sampleRate;
+                    let amplitude = 0;
+                    
+                    // Calculate amplitude at this time based on active notes
+                    this.notes.forEach(note => {
+                        if (time >= note.time && time <= note.time + note.duration) {
+                            const [noteName, octave] = this.parseNote(note.note);
+                            const frequency = this.getFrequency(noteName, parseInt(octave));
+                            const phase = (time - note.time) * frequency * 2 * Math.PI;
+                            
+                            // Simple envelope
+                            const attack = 0.1;
+                            const decay = 0.3;
+                            const noteTime = time - note.time;
+                            let envelope = 1;
+                            
+                            if (noteTime < attack) {
+                                envelope = noteTime / attack;
+                            } else if (noteTime > note.duration - decay) {
+                                envelope = (note.duration - noteTime) / decay;
+                            }
+                            
+                            amplitude += Math.sin(phase) * note.velocity * envelope * 0.3;
+                        }
+                    });
+                    
+                    const y = canvas.height / 2 + amplitude * canvas.height / 4;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(i, y);
+                    } else {
+                        ctx.lineTo(i, y);
+                    }
+                }
+                
+                ctx.stroke();
+                
+                // Draw time markers
+                ctx.fillStyle = '#6c757d';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                
+                for (let i = 1; i < duration; i++) {
+                    const x = (i / duration) * canvas.width;
+                    ctx.fillText(`${i}s`, x, canvas.height - 5);
+                    
+                    ctx.strokeStyle = '#dee2e6';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height - 20);
+                    ctx.stroke();
+                }
+            }
+
+            loadPreset(presetName) {
+                this.clear();
+                
+                const presets = {
+                    classic: [
+                        { note: 'C5', time: 0, duration: 0.3 },
+                        { note: 'E5', time: 0.5, duration: 0.3 },
+                        { note: 'G5', time: 1.0, duration: 0.3 },
+                        { note: 'C6', time: 1.5, duration: 0.5 },
+                    ],
+                    modern: [
+                        { note: 'A4', time: 0, duration: 0.2 },
+                        { note: 'C5', time: 0.3, duration: 0.2 },
+                        { note: 'E5', time: 0.6, duration: 0.2 },
+                        { note: 'A5', time: 0.9, duration: 0.4 },
+                        { note: 'E5', time: 1.5, duration: 0.3 },
+                    ],
+                    gentle: [
+                        { note: 'F4', time: 0, duration: 0.8 },
+                        { note: 'A4', time: 1.0, duration: 0.8 },
+                        { note: 'C5', time: 2.0, duration: 0.8 },
+                        { note: 'F5', time: 3.0, duration: 1.0 },
+                    ],
+                    energetic: [
+                        { note: 'C5', time: 0, duration: 0.15 },
+                        { note: 'D5', time: 0.2, duration: 0.15 },
+                        { note: 'E5', time: 0.4, duration: 0.15 },
+                        { note: 'G5', time: 0.6, duration: 0.15 },
+                        { note: 'C6', time: 0.8, duration: 0.3 },
+                        { note: 'G5', time: 1.2, duration: 0.15 },
+                        { note: 'E5', time: 1.4, duration: 0.15 },
+                        { note: 'C5', time: 1.6, duration: 0.3 },
+                    ]
+                };
+                
+                if (presets[presetName]) {
+                    presets[presetName].forEach(noteData => {
+                        const note = {
+                            id: Date.now() + Math.random(),
+                            note: noteData.note,
+                            time: noteData.time,
+                            duration: noteData.duration,
+                            velocity: 0.7
+                        };
+                        this.notes.push(note);
+                        this.renderNote(note);
+                    });
+                    
+                    this.updateStatus();
+                    this.updateWaveform();
+                }
+            }
+
+            showExportModal() {
+                if (this.notes.length === 0) {
+                    alert('Please create some notes before exporting!');
+                    return;
+                }
+                this.elements.exportModal.style.display = 'block';
+            }
+
+            async exportAudio() {
+                const filename = this.elements.filenameInput.value || 'ringtone';
+                const quality = this.elements.qualitySelect.value;
+                
+                this.elements.loadingIndicator.innerHTML = '<div class="loading"></div>';
+                this.elements.playbackStatus.textContent = 'Exporting...';
+                
+                try {
+                    // Create offline audio context for rendering
+                    const duration = parseInt(this.elements.durationSlider.value);
+                    const sampleRate = 44100;
+                    const offlineCtx = new OfflineAudioContext(2, sampleRate * duration, sampleRate);
+                    
+                    // Create master gain
+                    const masterGain = offlineCtx.createGain();
+                    masterGain.gain.value = this.elements.volumeSlider.value / 100;
+                    masterGain.connect(offlineCtx.destination);
+                    
+                    // Render all notes
+                    this.notes.forEach(noteData => {
+                        const [noteName, octave] = this.parseNote(noteData.note);
+                        const frequency = this.getFrequency(noteName, parseInt(octave));
+                        
+                        const oscillator = offlineCtx.createOscillator();
+                        const gainNode = offlineCtx.createGain();
+                        const filterNode = offlineCtx.createBiquadFilter();
+                        
+                        oscillator.type = this.elements.instrumentSelect.value;
+                        oscillator.frequency.setValueAtTime(frequency, noteData.time);
+                        
+                        filterNode.type = 'lowpass';
+                        filterNode.frequency.setValueAtTime(frequency * 4, noteData.time);
+                        
+                        const attack = parseFloat(this.elements.attackSlider.value);
+                        gainNode.gain.setValueAtTime(0, noteData.time);
+                        gainNode.gain.linearRampToValueAtTime(noteData.velocity * 0.5, noteData.time + attack);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, noteData.time + noteData.duration - 0.1);
+                        
+                        oscillator.connect(filterNode);
+                        filterNode.connect(gainNode);
+                        gainNode.connect(masterGain);
+                        
+                        oscillator.start(noteData.time);
+                        oscillator.stop(noteData.time + noteData.duration);
+                    });
+                    
+                    // Render audio
+                    const renderedBuffer = await offlineCtx.startRendering();
+                    
+                    // Convert to WAV and create download
+                    const wavBlob = this.bufferToWav(renderedBuffer);
+                    const url = URL.createObjectURL(wavBlob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.wav`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    this.elements.exportModal.style.display = 'none';
+                    this.elements.playbackStatus.textContent = 'Export completed!';
+                    
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    this.elements.playbackStatus.textContent = 'Export failed';
+                }
+                
+                this.elements.loadingIndicator.innerHTML = '';
+            }
+
+            bufferToWav(buffer) {
+                const length = buffer.length;
+                const arrayBuffer = new ArrayBuffer(44 + length * 2);
+                const view = new DataView(arrayBuffer);
+                
+                // WAV header
+                const writeString = (offset, string) => {
+                    for (let i = 0; i < string.length; i++) {
+                        view.setUint8(offset + i, string.charCodeAt(i));
+                    }
+                };
+                
+                writeString(0, 'RIFF');
+                view.setUint32(4, 36 + length * 2, true);
+                writeString(8, 'WAVE');
+                writeString(12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, 1, true);
+                view.setUint32(24, buffer.sampleRate, true);
+                view.setUint32(28, buffer.sampleRate * 2, true);
+                view.setUint16(32, 2, true);
+                view.setUint16(34, 16, true);
+                writeString(36, 'data');
+                view.setUint32(40, length * 2, true);
+                
+                // Convert float samples to 16-bit PCM
+                const channelData = buffer.getChannelData(0);
+                let offset = 44;
+                for (let i = 0; i < length; i++) {
+                    const sample = Math.max(-1, Math.min(1, channelData[i]));
+                    view.setInt16(offset, sample * 0x7FFF, true);
+                    offset += 2;
+                }
+                
+                return new Blob([arrayBuffer], { type: 'audio/wav' });
+            }
+        }
+
+        // Initialize the app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new RingtoneMaker();
+        });
+    </script>
+</body>
+</html>
